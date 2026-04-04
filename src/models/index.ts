@@ -9,8 +9,6 @@ import { Products } from "./Products";
 import { Reviews } from "./Reviews";
 import { Users } from "./Users";
 
-console.log("✅ Associations loaded");
-
 Users.hasOne(Carts, {
   foreignKey: "userId",
   as: "cart",
@@ -109,6 +107,8 @@ Products.belongsTo(Categories, {
 Products.hasMany(ProductImage, {
   foreignKey: "productId",
   as: "images",
+  onDelete: "CASCADE",
+  hooks: true,
 });
 
 Products.hasMany(Reviews, {

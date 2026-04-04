@@ -7,3 +7,7 @@ export const createUserSchema = z.object({
   phone: z.string().optional(),
   role: z.enum(["user", "admin"]).optional(),
 });
+
+export const checkUserEmailSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});

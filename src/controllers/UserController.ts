@@ -2,7 +2,6 @@ import { NextFunction } from "express";
 import { Request, Response } from "express";
 import { response } from "../utils/response";
 import { userService } from "../services/UserService";
-import { createUserSchema } from "../schema/user";
 
 const getAllUsers = async (
   _req: Request,
@@ -14,7 +13,6 @@ const getAllUsers = async (
 
     return response.ok(res, users, "Get all users successfully");
   } catch (error) {
-    console.error("🔥 MESSAGE:", error);
     next(error);
   }
 };

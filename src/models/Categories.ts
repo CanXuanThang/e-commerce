@@ -33,6 +33,7 @@ Categories.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     parentId: {
       type: DataTypes.INTEGER,

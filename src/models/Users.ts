@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../database/database";
+import { Carts } from "./Carts";
 
 export interface UserAttributes {
   id: number;
@@ -74,3 +75,9 @@ Users.init(
     tableName: "users",
   },
 );
+
+Users.afterCreate(async (user) => {
+  await Carts.create({
+    userId: user.id,
+  });
+});

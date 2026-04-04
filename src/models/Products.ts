@@ -8,6 +8,7 @@ export interface ProductAttributes {
   price: number;
   size: string;
   quantity: number;
+  categoryId: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -27,6 +28,7 @@ export class Products
   public price!: number;
   public size!: string;
   public quantity!: number;
+  public categoryId!: number;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -59,6 +61,16 @@ Products.init(
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "categories",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
     createdAt: {
       type: DataTypes.DATE,
