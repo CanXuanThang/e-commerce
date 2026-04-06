@@ -1,4 +1,5 @@
 import { CartItem } from "../models/CartItem";
+import { ApiError } from "../utils/apiError";
 
 const addProductToCart = async (
   cartId: number,
@@ -19,7 +20,7 @@ const addProductToCart = async (
 const updateCartItem = async (id: number, quantity: number) => {
   const cartItem = await CartItem.findByPk(id);
   if (!cartItem) {
-    throw new Error("Cart item not found");
+    throw new ApiError(404, "Cart item not found");
   }
   cartItem.quantity = quantity;
   return cartItem.save();
@@ -28,7 +29,7 @@ const updateCartItem = async (id: number, quantity: number) => {
 const removeCartItem = async (id: number) => {
   const cartItem = await CartItem.findByPk(id);
   if (!cartItem) {
-    throw new Error("Cart item not found");
+    throw new ApiError(404, "Cart item not found");
   }
   return cartItem.destroy();
 };

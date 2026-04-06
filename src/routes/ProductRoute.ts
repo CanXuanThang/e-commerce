@@ -3,6 +3,7 @@ import { productController } from "../controllers/ProductController";
 import { validate } from "../middlewares/validate";
 import { createProductSchema } from "../schema/product";
 import { checkIdSchema } from "../schema/common";
+import { checkRole, verifyToken } from "../middlewares/auth";
 
 const productRoute = Router();
 const path = "/products";
@@ -65,6 +66,8 @@ productRoute.get(path, productController.getAllProducts);
 productRoute.post(
   path,
   validate({ body: createProductSchema }),
+  verifyToken,
+  checkRole("admin"),
   productController.createProduct,
 );
 
@@ -132,6 +135,8 @@ productRoute.get(
 productRoute.put(
   `${path}/:id`,
   validate({ params: checkIdSchema, body: createProductSchema }),
+  verifyToken,
+  checkRole("admin"),
   productController.updateProduct,
 );
 
@@ -178,6 +183,8 @@ productRoute.get(
 productRoute.delete(
   `${path}/:id`,
   validate({ params: checkIdSchema }),
+  verifyToken,
+  checkRole("admin"),
   productController.deleteProduct,
 );
 

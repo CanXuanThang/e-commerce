@@ -11,6 +11,7 @@ import { categoryRoute } from "./routes/CategoryRoute";
 import productRoute from "./routes/ProductRoute";
 import productImageRoute from "./routes/ProductImage";
 import cartItemRoute from "./routes/CartItemRoute";
+import { errorMiddleware } from "./middlewares/errorMiddleware";
 
 const app = express();
 
@@ -22,14 +23,12 @@ const apiUrl = process.env.API_URL || "/api/v1";
 const port = process.env.PORT;
 
 // routes
-app.use(apiUrl, userRoute);
 app.use(apiUrl, categoryRoute);
 app.use(apiUrl, productRoute);
 app.use(apiUrl, productImageRoute);
 app.use(apiUrl, cartItemRoute);
+app.use(apiUrl, userRoute);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(errorMiddleware);
 
-app.listen(port, () => {
-  dbConnection();
-  console.log(`Server is running on port ${port}`);
-});
+app.listen(port, () => dbConnection());

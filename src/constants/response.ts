@@ -23,3 +23,13 @@ export const unauthorizedResponse = (message = "Not authenticated") => {
     timestamp: new Date().toISOString(),
   };
 };
+
+export const notHavePermissionResponse = (
+  message = "You do not have permission to access",
+) => {
+  return {
+    success: false,
+    message,
+    timestamp: new Date().toISOString(),
+  };
+};

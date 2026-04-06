@@ -3,6 +3,7 @@ import { cartItemController } from "../controllers/CartItemController";
 import { validate } from "../middlewares/validate";
 import { cartItemSchema } from "../schema/cartItem";
 import { checkIdSchema } from "../schema/common";
+import { verifyToken } from "../middlewares/auth";
 
 const cartItemRoute = Router();
 const path = "/cart-items";
@@ -130,26 +131,31 @@ const path = "/cart-items";
 cartItemRoute.get(
   `${path}/:cartId`,
   validate({ params: checkIdSchema }),
+  verifyToken,
   cartItemController.getCartItemsByCartId,
 );
 cartItemRoute.post(
   path,
   validate({ body: cartItemSchema }),
+  verifyToken,
   cartItemController.addProductToCart,
 );
 cartItemRoute.put(
   `${path}/:id`,
   validate({ params: checkIdSchema, body: cartItemSchema }),
+  verifyToken,
   cartItemController.updateCartItem,
 );
 cartItemRoute.delete(
   `${path}/:id`,
   validate({ params: checkIdSchema }),
+  verifyToken,
   cartItemController.removeCartItem,
 );
 cartItemRoute.delete(
   `/carts/:cartId/cart-items`,
   validate({ params: checkIdSchema }),
+  verifyToken,
   cartItemController.clearCart,
 );
 

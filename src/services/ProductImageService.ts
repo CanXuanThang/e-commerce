@@ -1,5 +1,6 @@
 import cloudinary from "../config/cloudinary";
 import { ProductImage } from "../models/ProductImage";
+import { ApiError } from "../utils/apiError";
 
 const getImagesByProductId = async (productId: number) => {
   return ProductImage.findAll({ where: { productId } });
@@ -12,7 +13,7 @@ const createProductImage = async (productId: number, imageUrl: string) => {
 const deleteProductImage = async (id: number) => {
   const productImage = await ProductImage.findByPk(id);
   if (!productImage) {
-    throw new Error("Product image not found");
+    throw new ApiError(404, "Product image not found");
   }
   const publicId = productImage.imageUrl
     .split("/")

@@ -2,6 +2,7 @@ import { ca } from "zod/v4/locales";
 import { Categories } from "../models/Categories";
 import { ProductImage } from "../models/ProductImage";
 import { Products } from "../models/Products";
+import { ApiError } from "../utils/apiError";
 
 interface ICreateProduct {
   name: string;
@@ -30,7 +31,7 @@ const getAllProducts = async () => {
       ],
     });
   } catch (error) {
-    console.error("🔥 MESSAGE:", error);
+    throw new ApiError(500, "Failed to fetch products");
   }
 };
 
@@ -59,7 +60,7 @@ const getProductById = async (id: number) => {
 const updateProduct = async (id: number, payload: Partial<ICreateProduct>) => {
   const product = await Products.findByPk(id);
   if (!product) {
-    throw new Error("Product not found");
+    throw new ApiError(404, "Product not found");
   }
   return product.update(payload);
 };
@@ -67,7 +68,7 @@ const updateProduct = async (id: number, payload: Partial<ICreateProduct>) => {
 const deleteProduct = async (id: number) => {
   const product = await Products.findByPk(id);
   if (!product) {
-    throw new Error("Product not found");
+    throw new ApiError(404, "Product not found");
   }
   return product.destroy();
 };
@@ -75,7 +76,7 @@ const deleteProduct = async (id: number) => {
 const getProductsByCategoryId = async (categoryId: number) => {
   const category = await Categories.findByPk(categoryId);
   if (!category) {
-    throw new Error("Category not found");
+    throw new ApiError(404, "Category not found");
   }
   const products = await Products.findAll({ where: { categoryId } });
 

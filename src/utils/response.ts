@@ -1,9 +1,10 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import {
   successResponse,
   errorResponse,
   unauthorizedResponse,
+  notHavePermissionResponse,
 } from "../constants/response";
 const ok = <T>(res: Response, data: T, message = "Success") => {
   const response = successResponse(data, message);
@@ -33,6 +34,10 @@ const notHavePermission = <T>(
   const response = errorResponse(data, message);
   return res.status(StatusCodes.METHOD_NOT_ALLOWED).json(response);
 };
+const forbidden = <T>(res: Response, message = "Access forbidden") => {
+  const response = notHavePermissionResponse(message);
+  return res.status(StatusCodes.FORBIDDEN).json(response);
+};
 
 export const response = {
   ok,
@@ -41,4 +46,5 @@ export const response = {
   serverError,
   unauthorization,
   notHavePermission,
+  forbidden,
 };

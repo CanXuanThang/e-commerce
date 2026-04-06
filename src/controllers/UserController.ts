@@ -1,7 +1,10 @@
 import { NextFunction } from "express";
 import { Request, Response } from "express";
 import { response } from "../utils/response";
-import { userService } from "../services/UserService";
+import { IAuthRequest, userService } from "../services/UserService";
+import bcrypt from "bcrypt";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import jwt from "jsonwebtoken";
 
 const getAllUsers = async (
   _req: Request,
@@ -89,6 +92,37 @@ const getUserByEmail = async (
   }
 };
 
+const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password } = req.body;
+    const { accessToken, refreshToken } = await userService.login({
+      email,
+      password,
+    });
+    return response.ok(
+      res,
+      { accessToken, refreshToken },
+      "Login successfully",
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { refreshToken } = req.body;
+    const tokens = await userService.refreshToken(refreshToken);
+    return response.ok(res, tokens, "Token refreshed successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const userController = {
   getAllUsers,
   getUserById,
@@ -96,4 +130,6 @@ export const userController = {
   updateUser,
   deleteUser,
   getUserByEmail,
+  login,
+  refreshToken,
 };

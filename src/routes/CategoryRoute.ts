@@ -3,6 +3,7 @@ import { categoryController } from "../controllers/CategoryController";
 import { validate } from "../middlewares/validate";
 import { checkIdSchema } from "../schema/common";
 import { createCategorySchema } from "../schema/category";
+import { checkRole, verifyToken } from "../middlewares/auth";
 
 const route = Router();
 const path = "/categories";
@@ -45,6 +46,8 @@ route.get(path, categoryController.getAllCategories);
 route.post(
   path,
   validate({ body: createCategorySchema }),
+  verifyToken,
+  checkRole("admin"),
   categoryController.createCategory,
 );
 
@@ -78,6 +81,8 @@ route.post(
 route.put(
   `${path}/:id`,
   validate({ params: checkIdSchema, body: createCategorySchema }),
+  verifyToken,
+  checkRole("admin"),
   categoryController.updateCategory,
 );
 

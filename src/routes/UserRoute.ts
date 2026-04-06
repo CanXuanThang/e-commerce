@@ -1,8 +1,14 @@
 import { Router } from "express";
 import { userController } from "../controllers/UserController";
 import { validate } from "../middlewares/validate";
-import { checkUserEmailSchema, createUserSchema } from "../schema/user";
+import {
+  checkRequestLoginSchema,
+  checkUserEmailSchema,
+  createUserSchema,
+} from "../schema/user";
 import { checkIdSchema } from "../schema/common";
+import z from "zod";
+import { checkRole, verifyToken } from "../middlewares/auth";
 
 const route = Router();
 const path = "/users";
@@ -16,7 +22,7 @@ const path = "/users";
  *       200:
  *         description: Thành công
  */
-route.get(path, userController.getAllUsers);
+route.get(path, verifyToken, checkRole("admin"), userController.getAllUsers);
 
 /**
  * @swagger
@@ -39,6 +45,8 @@ route.get(
   validate({
     params: checkIdSchema,
   }),
+  verifyToken,
+  checkRole("admin"),
   userController.getUserById,
 );
 
@@ -68,6 +76,8 @@ route.get(
 route.post(
   path,
   validate({ body: createUserSchema }),
+  verifyToken,
+  checkRole("admin"),
   userController.createUser,
 );
 
@@ -111,6 +121,8 @@ route.put(
     body: createUserSchema,
     params: checkIdSchema,
   }),
+  verifyToken,
+  checkRole("admin"),
   userController.updateUser,
 );
 
@@ -138,6 +150,8 @@ route.get(
   validate({
     query: checkUserEmailSchema,
   }),
+  verifyToken,
+  checkRole("admin"),
   userController.getUserByEmail,
 );
 
@@ -162,7 +176,69 @@ route.delete(
   validate({
     params: checkIdSchema,
   }),
+  verifyToken,
+  checkRole("admin"),
   userController.deleteUser,
+);
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: admin@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+route.post(
+  `/auth/login`,
+  validate({ body: checkRequestLoginSchema }),
+  userController.login,
+);
+
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     summary: Refresh token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+route.post(
+  `/auth/refresh-token`,
+  validate({ body: z.string().min(1, "Refresh token is required") }),
+  userController.refreshToken,
 );
 
 export const userRoute = route;

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { productImageController } from "../controllers/ProductImageController";
 import { upload } from "../middlewares/uploadImage";
+import { checkRole, verifyToken } from "../middlewares/auth";
 
 const productImageRoute = Router();
 const path = "/product-images";
@@ -102,6 +103,8 @@ productImageRoute.get(
 productImageRoute.post(
   `${path}`,
   upload.array("image", 5),
+  verifyToken,
+  checkRole("admin"),
   productImageController.createProductImages,
 );
 
@@ -135,6 +138,8 @@ productImageRoute.post(
  */
 productImageRoute.delete(
   `${path}/:id`,
+  verifyToken,
+  checkRole("admin"),
   productImageController.deleteProductImage,
 );
 
