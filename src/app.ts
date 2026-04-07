@@ -12,15 +12,17 @@ import productRoute from "./routes/ProductRoute";
 import productImageRoute from "./routes/ProductImage";
 import cartItemRoute from "./routes/CartItemRoute";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
+import cors from "cors";
 
 const app = express();
 
 // middleware
+app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
 const apiUrl = process.env.API_URL || "/api/v1";
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // routes
 app.use(apiUrl, categoryRoute);
@@ -31,4 +33,12 @@ app.use(apiUrl, userRoute);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(errorMiddleware);
 
-app.listen(port, () => dbConnection());
+const startServer = async () => {
+  await dbConnection();
+
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+};
+
+startServer();
