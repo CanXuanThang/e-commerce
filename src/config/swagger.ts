@@ -10,7 +10,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://e-commerce-production-eaaf.up.railway.app//api/v1",
+        url: "https://e-commerce-production-eaaf.up.railway.app/api/v1",
       },
     ],
   },
