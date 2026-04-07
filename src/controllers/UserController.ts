@@ -1,10 +1,7 @@
 import { NextFunction } from "express";
 import { Request, Response } from "express";
 import { response } from "../utils/response";
-import { IAuthRequest, userService } from "../services/UserService";
-import bcrypt from "bcrypt";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
-import jwt from "jsonwebtoken";
+import { userService } from "../services/UserService";
 
 const getAllUsers = async (
   _req: Request,

@@ -13,6 +13,7 @@ import productImageRoute from "./routes/ProductImage";
 import cartItemRoute from "./routes/CartItemRoute";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import cors from "cors";
+import bannerRoute from "./routes/BannerRoute";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(apiUrl, categoryRoute);
 app.use(apiUrl, productRoute);
 app.use(apiUrl, productImageRoute);
 app.use(apiUrl, cartItemRoute);
+app.use(apiUrl, bannerRoute);
 app.use(apiUrl, userRoute);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(errorMiddleware);

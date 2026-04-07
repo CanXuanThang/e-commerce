@@ -23,7 +23,6 @@ const deleteProductImage = async (id: number) => {
 
   await cloudinary.uploader.destroy(publicId);
 
-  await productImage.destroy();
   return productImage.destroy();
 };
 
