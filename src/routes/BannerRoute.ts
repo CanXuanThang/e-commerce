@@ -4,6 +4,7 @@ import { validate } from "../middlewares/validate";
 import { checkIdSchema } from "../schema/common";
 import { bannerSchema } from "../schema/banner";
 import { upload } from "../middlewares/uploadImage";
+import { checkRole } from "../middlewares/auth";
 
 const bannerRoute = Router();
 const path = "/banners";
@@ -95,11 +96,13 @@ bannerRoute.post(
   `${path}/:id`,
   upload.single("image"),
   validate({ params: checkIdSchema, body: bannerSchema }),
+  checkRole("admin"),
   bannerController.updateBanner,
 );
 bannerRoute.delete(
   `${path}/:id`,
   validate({ params: checkIdSchema }),
+  checkRole("admin"),
   bannerController.deleteBanner,
 );
 
