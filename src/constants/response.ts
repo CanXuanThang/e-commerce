@@ -3,7 +3,6 @@ export const successResponse = <T>(data: T, message = "Success") => {
     success: true,
     message,
     data,
-    timestamp: new Date().toISOString(),
   };
 };
 
@@ -12,7 +11,6 @@ export const errorResponse = (error: any, message = "Error") => {
     success: false,
     message,
     error,
-    timestamp: new Date().toISOString(),
   };
 };
 
@@ -20,7 +18,6 @@ export const unauthorizedResponse = (message = "Not authenticated") => {
   return {
     success: false,
     message,
-    timestamp: new Date().toISOString(),
   };
 };
 
@@ -30,6 +27,5 @@ export const notHavePermissionResponse = (
   return {
     success: false,
     message,
-    timestamp: new Date().toISOString(),
   };
 };

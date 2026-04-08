@@ -94,8 +94,6 @@ productImageRoute.get(
  *                         type: integer
  *                       imageUrl:
  *                         type: string
- *                       variantId:
- *                         type: integer
  *                 message:
  *                   type: string
  *                   example: Images uploaded successfully

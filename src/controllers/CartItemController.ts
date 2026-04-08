@@ -8,13 +8,20 @@ const addProductToCart = async (
   next: NextFunction,
 ) => {
   try {
-    const { cartId, productId, quantity } = req.body;
-    const cartItem = await cartItemService.addProductToCart(
-      cartId,
-      productId,
-      quantity,
-    );
-    return response.ok(res, cartItem, "Product added to cart successfully");
+    const { productId, quantity } = req.body;
+    const userId = req.user?.id;
+    if (userId) {
+      const cart = await cartItemService.getCartByUserId(userId);
+      if (cart) {
+        const cartItem = await cartItemService.addProductToCart(
+          cart.id,
+          productId,
+          quantity,
+        );
+        return response.ok(res, cartItem, "Product added to cart successfully");
+      }
+    }
+    return response.notFound(res, null, "Not found cart by user !");
   } catch (error) {
     next(error);
   }
@@ -57,12 +64,16 @@ const removeCartItem = async (
 
 const clearCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cartId = parseInt(req.params.cartId as string);
-    if (isNaN(cartId)) {
+    const userId = req.user?.id;
+    if (!userId) {
       return response.badRequest(res, null, "Invalid cart ID");
     }
-    await cartItemService.clearCart(cartId);
-    return response.ok(res, null, "Cart cleared successfully");
+    const cart = await cartItemService.getCartByUserId(userId);
+    if (cart) {
+      await cartItemService.clearCart(cart.id);
+      return response.ok(res, null, "Cart cleared successfully");
+    }
+    return response.notFound(res, null, "Not found cart by user !");
   } catch (error) {
     next(error);
   }
@@ -74,12 +85,18 @@ const getCartItemsByCartId = async (
   next: NextFunction,
 ) => {
   try {
-    const cartId = parseInt(req.params.cartId as string);
-    if (isNaN(cartId)) {
+    const userId = req.user?.id;
+    if (!userId) {
       return response.badRequest(res, null, "Invalid cart ID");
     }
-    const cartItems = await cartItemService.getCartItemsByCartId(cartId);
-    return response.ok(res, cartItems, "Get cart items successfully");
+
+    const cart = await cartItemService.getCartByUserId(userId);
+    if (cart) {
+      const cartItems = await cartItemService.getCartItemsByCartId(cart.id);
+      return response.ok(res, cartItems, "Get cart items successfully");
+    }
+
+    return response.notFound(res, null, "Not found cart by user !");
   } catch (error) {
     next(error);
   }

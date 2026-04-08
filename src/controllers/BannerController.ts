@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { bannerService } from "../services/BannerService";
 import { response } from "../utils/response";
+import { JwtPayload } from "jsonwebtoken";
 
 const getAllBanner = async (
   req: Request,
@@ -56,8 +57,35 @@ const deleteBanner = async (
   }
 };
 
+const create = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const files = req.files as Express.Multer.File[];
+    let orders = req.body.orders;
+
+    if (!Array.isArray(orders)) {
+      orders = orders.split(",");
+    }
+
+    const imgs = files.map((file, index) => ({
+      imageUrl: file.path,
+      order: orders[index] ? Number(orders[index]) : 0,
+    }));
+
+    if (imgs && imgs.length > 0) {
+      await bannerService.createMany(imgs);
+
+      return response.ok(res, null, "Create banner successfuly");
+    }
+
+    return response.serverError(res, null);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const bannerController = {
   getAllBanner,
   deleteBanner,
   updateBanner,
+  create,
 };

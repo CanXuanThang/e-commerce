@@ -28,7 +28,6 @@ export const checkRole =
   (...roles: string[]) =>
   (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user;
-    console.log(user);
 
     if (!user || !roles.includes(user.role)) {
       return response.forbidden(res);

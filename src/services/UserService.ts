@@ -79,7 +79,7 @@ const refreshToken = async (refreshToken: string) => {
   try {
     const decoded: any = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET!,
+      process.env.JWT_REFRESH_SECRET_KEY!,
     );
     const { id, role } = decoded;
     return {

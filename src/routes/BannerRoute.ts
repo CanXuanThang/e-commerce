@@ -4,7 +4,7 @@ import { validate } from "../middlewares/validate";
 import { checkIdSchema } from "../schema/common";
 import { bannerSchema } from "../schema/banner";
 import { upload } from "../middlewares/uploadImage";
-import { checkRole } from "../middlewares/auth";
+import { checkRole, verifyToken } from "../middlewares/auth";
 
 const bannerRoute = Router();
 const path = "/banners";
@@ -18,7 +18,7 @@ const path = "/banners";
 
 /**
  * @swagger
- * /api/v1/banners:
+ * /banners:
  *   get:
  *     summary: Get all banners
  *     tags: [Banners]
@@ -40,8 +40,8 @@ const path = "/banners";
 
 /**
  * @swagger
- * /api/v1/banners/{id}:
- *   post:
+ * /banners/{id}:
+ *   put:
  *     summary: Update banner with image upload
  *     tags: [Banners]
  *     parameters:
@@ -61,7 +61,7 @@ const path = "/banners";
  *               image:
  *                 type: string
  *                 format: binary
- *               displayOrder:
+ *               order:
  *                 type: integer
  *                 example: 1
  *     responses:
@@ -75,7 +75,7 @@ const path = "/banners";
 
 /**
  * @swagger
- * /api/v1/banners/{id}:
+ * /banners/{id}:
  *   delete:
  *     summary: Delete banner
  *     tags: [Banners]
@@ -91,19 +91,59 @@ const path = "/banners";
  *         description: Banner deleted successfully
  */
 
+/**
+ * @swagger
+ * /banners:
+ *   post:
+ *     summary: Upload multiple images with order
+ *     tags: [Banners]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               orders:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [1,2,3]
+ *     responses:
+ *       200:
+ *         description: Upload success
+ */
+
 bannerRoute.get(path, bannerController.getAllBanner);
-bannerRoute.post(
+
+bannerRoute.put(
   `${path}/:id`,
   upload.single("image"),
+  verifyToken,
   validate({ params: checkIdSchema, body: bannerSchema }),
   checkRole("admin"),
   bannerController.updateBanner,
 );
+
 bannerRoute.delete(
   `${path}/:id`,
   validate({ params: checkIdSchema }),
+  verifyToken,
   checkRole("admin"),
   bannerController.deleteBanner,
+);
+
+bannerRoute.post(
+  path,
+  upload.array("images", 5),
+  verifyToken,
+  checkRole("admin"),
+  bannerController.create,
 );
 
 export default bannerRoute;

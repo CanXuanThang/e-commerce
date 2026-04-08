@@ -1,4 +1,5 @@
 import { CartItem } from "../models/CartItem";
+import { Carts } from "../models/Carts";
 import { ApiError } from "../utils/apiError";
 
 const addProductToCart = async (
@@ -42,10 +43,15 @@ const getCartItemsByCartId = async (cartId: number) => {
   return CartItem.findAll({ where: { cartId } });
 };
 
+const getCartByUserId = async (userId: number) => {
+  return Carts.findOne({ where: { userId } });
+};
+
 export const cartItemService = {
   addProductToCart,
   updateCartItem,
   removeCartItem,
   clearCart,
   getCartItemsByCartId,
+  getCartByUserId,
 };

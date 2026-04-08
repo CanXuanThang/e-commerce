@@ -204,10 +204,10 @@ route.delete(
  *             properties:
  *               email:
  *                 type: string
- *                 example: admin@gmail.com
+ *                 example: abc@gmail.com
  *               password:
  *                 type: string
- *                 example: 123456
+ *                 example: 123123
  *     responses:
  *       200:
  *         description: Thành công
@@ -242,7 +242,11 @@ route.post(
  */
 route.post(
   `/auth/refresh-token`,
-  validate({ body: z.string().min(1, "Refresh token is required") }),
+  validate({
+    body: z.object({
+      refreshToken: z.string().min(1, "Refresh token is required"),
+    }),
+  }),
   userController.refreshToken,
 );
 

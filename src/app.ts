@@ -14,6 +14,7 @@ import cartItemRoute from "./routes/CartItemRoute";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import cors from "cors";
 import bannerRoute from "./routes/BannerRoute";
+import "./types/express";
 
 const app = express();
 

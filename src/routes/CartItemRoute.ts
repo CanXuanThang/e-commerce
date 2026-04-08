@@ -17,13 +17,13 @@ const path = "/cart-items";
 
 /**
  * @swagger
- * /cart-items/{cartId}:
+ * /cart-items/{userId}:
  *   get:
- *     summary: Lấy danh sách sản phẩm theo cartId
+ *     summary: Lấy danh sách sản phẩm theo userId
  *     tags: [CartItems]
  *     parameters:
  *       - in: path
- *         name: cartId
+ *         name: userId
  *         required: true
  *         schema:
  *           type: integer
@@ -46,14 +46,14 @@ const path = "/cart-items";
  *           schema:
  *             type: object
  *             properties:
- *               cartId:
+ *               userId:
  *                 type: integer
  *               productId:
  *                 type: integer
  *               quantity:
  *                 type: integer
  *             required:
- *               - cartId
+ *               - userUd
  *               - productId
  *               - quantity
  *     responses:
@@ -81,8 +81,6 @@ const path = "/cart-items";
  *           schema:
  *             type: object
  *             properties:
- *               cartId:
- *                 type: integer
  *               productId:
  *                 type: integer
  *               quantity:
@@ -112,17 +110,10 @@ const path = "/cart-items";
 
 /**
  * @swagger
- * /carts/{cartId}/cart-items:
+ * /carts/delete-all:
  *   delete:
  *     summary: Xóa toàn bộ sản phẩm trong giỏ hàng
  *     tags: [CartItems]
- *     parameters:
- *       - in: path
- *         name: cartId
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID giỏ hàng
  *     responses:
  *       200:
  *         description: Xóa toàn bộ cart items thành công
@@ -153,7 +144,7 @@ cartItemRoute.delete(
   cartItemController.removeCartItem,
 );
 cartItemRoute.delete(
-  `/carts/:cartId/cart-items`,
+  `/carts/delete-all`,
   validate({ params: checkIdSchema }),
   verifyToken,
   cartItemController.clearCart,
