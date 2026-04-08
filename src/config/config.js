@@ -6,7 +6,7 @@ export default {
     password: process.env.PASSWORD_DB,
     database: process.env.DATABASE_NAME,
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     dialect: "mysql",
   },
   production: {
@@ -14,7 +14,7 @@ export default {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     dialect: "mysql",
   },
 };

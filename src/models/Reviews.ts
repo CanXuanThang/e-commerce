@@ -20,7 +20,7 @@ Reviews.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "users",
+        model: "Users",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -30,7 +30,7 @@ Reviews.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "products",
+        model: "Products",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -47,7 +47,7 @@ Reviews.init(
   {
     sequelize,
     modelName: "Reviews",
-    tableName: "reviews",
+    tableName: "Reviews",
     timestamps: false,
   },
 );

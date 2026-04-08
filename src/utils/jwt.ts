@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
-const accessTokenSecret = process.env.JWT_SECRET!;
-const refreshTokenSecret = process.env.JWT_REFRESH_SECRET!;
+const accessTokenSecret = process.env.JWT_SECRET_KEY!;
+const refreshTokenSecret = process.env.JWT_REFRESH_SECRET_KEY!;
 
 export const generateAccessToken = (payload: any) => {
   return jwt.sign(payload, accessTokenSecret, {

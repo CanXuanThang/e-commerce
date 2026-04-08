@@ -14,7 +14,7 @@ export const verifyToken = (
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!);
 
     (req as any).user = decoded;
 
@@ -28,6 +28,7 @@ export const checkRole =
   (...roles: string[]) =>
   (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user;
+    console.log(user);
 
     if (!user || !roles.includes(user.role)) {
       return response.forbidden(res);

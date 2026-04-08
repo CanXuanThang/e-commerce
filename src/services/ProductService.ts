@@ -53,7 +53,7 @@ const getAllProducts = async () => {
             },
             {
               model: ProductSize,
-              as: "items",
+              as: "sizes",
               attributes: ["id", "size", "quantity", "price"],
             },
           ],

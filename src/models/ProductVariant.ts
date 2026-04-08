@@ -40,7 +40,7 @@ ProductVariant.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "products",
+        model: "Products",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -67,7 +67,7 @@ ProductVariant.init(
   {
     sequelize,
     modelName: "ProductVariant",
-    tableName: "product_variant",
+    tableName: "ProductVariant",
     timestamps: false,
   },
 );

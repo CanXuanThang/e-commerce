@@ -8,13 +8,31 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API test bằng Swagger",
     },
+
     servers: [
       {
-        url: "https://e-commerce-production-eaaf.up.railway.app/api/v1",
+        url: "http://localhost:3000/api/v1",
+      },
+    ],
+
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+
+    security: [
+      {
+        bearerAuth: [],
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // 👈 đọc swagger từ routes
+
+  apis: ["./src/routes/*.ts"],
 };
 
 export const swaggerSpec = swaggerJsdoc(swaggerOptions);

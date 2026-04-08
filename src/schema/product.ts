@@ -48,3 +48,21 @@ export const variantSchema = z.object({
 
   sizes: z.array(sizeSchema).min(1, "Variant must have at least one size"),
 });
+
+// schemas/product.schema.ts
+
+export const createProductDetailsBodySchema = z.object({
+  variants: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val;
+        }
+      }
+      return val;
+    },
+    z.array(variantSchema).min(1, "variants must have at least one item"),
+  ),
+});

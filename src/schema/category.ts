@@ -6,5 +6,6 @@ export const createCategorySchema = z.object({
     .number()
     .int()
     .positive("Parent ID must be a positive integer")
+    .nullable()
     .optional(),
 });

@@ -1,9 +1,14 @@
 import { Router } from "express";
 import { productController } from "../controllers/ProductController";
 import { validate } from "../middlewares/validate";
-import { createProductSchema, variantSchema } from "../schema/product";
+import {
+  createProductDetailsBodySchema,
+  createProductSchema,
+  variantSchema,
+} from "../schema/product";
 import { checkIdSchema } from "../schema/common";
 import { checkRole, verifyToken } from "../middlewares/auth";
+import { upload } from "../middlewares/uploadImage";
 
 const productRoute = Router();
 const path = "/products";
@@ -148,7 +153,6 @@ productRoute.delete(
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID of the product
  *
  *     requestBody:
  *       required: true
@@ -191,37 +195,17 @@ productRoute.delete(
  *                 items:
  *                   type: string
  *                   format: binary
- *                 description: Upload variant images
  *
  *     responses:
  *       200:
  *         description: Product details created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Create product details successfully
- *
- *       400:
- *         description: Invalid request body
- *
- *       401:
- *         description: Unauthorized
- *
- *       403:
- *         description: Forbidden
  */
 productRoute.post(
-  path,
+  `${path}/:productId/details`,
+  upload.array("images", 5),
   verifyToken,
   checkRole("admin"),
-  validate({ body: variantSchema }),
+  validate({ body: createProductDetailsBodySchema }),
   productController.createProductDetails,
 );
 

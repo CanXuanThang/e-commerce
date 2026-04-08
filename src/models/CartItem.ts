@@ -38,7 +38,7 @@ CartItem.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "products",
+        model: "Products",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -53,7 +53,7 @@ CartItem.init(
   {
     sequelize,
     modelName: "CartItem",
-    tableName: "cart_items",
+    tableName: "CartItem",
     timestamps: false,
   },
 );

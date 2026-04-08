@@ -39,7 +39,7 @@ Categories.init(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: "categories",
+        model: "Categories",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -49,7 +49,7 @@ Categories.init(
   {
     sequelize,
     modelName: "Categories",
-    tableName: "categories",
+    tableName: "Categories",
     timestamps: false,
   },
 );

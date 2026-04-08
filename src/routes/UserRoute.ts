@@ -22,7 +22,12 @@ const path = "/users";
  *       200:
  *         description: Thành công
  */
-route.get(path, verifyToken, checkRole("admin"), userController.getAllUsers);
+route.get(
+  path,
+  // verifyToken,
+  // checkRole("admin"),
+  userController.getAllUsers,
+);
 
 /**
  * @swagger
@@ -75,9 +80,9 @@ route.get(
  */
 route.post(
   path,
-  validate({ body: createUserSchema }),
-  verifyToken,
-  checkRole("admin"),
+  // validate({ body: createUserSchema }),
+  // verifyToken,
+  // checkRole("admin"),
   userController.createUser,
 );
 

@@ -35,7 +35,7 @@ const createProduct = async (
       discount,
     });
 
-    if (product) {
+    if (!product) {
       return response.serverError(res, null);
     }
 
@@ -53,14 +53,7 @@ const createProductDetails = async (
   try {
     const productId = Number(req.params.productId);
 
-    const variants: VariantInput[] =
-      typeof req.body.variants === "string"
-        ? JSON.parse(req.body.variants)
-        : req.body;
-
-    if (!Array.isArray(variants)) {
-      return response.badRequest(res, null, "variants must be an array");
-    }
+    const variants: VariantInput[] = req.body.variants;
 
     const files = req.files as Express.Multer.File[];
 
@@ -71,7 +64,6 @@ const createProductDetails = async (
         variant.images = variant.images
           .map((img: any) => {
             const file = files[img.fileIndex];
-
             if (!file) return null;
 
             return {

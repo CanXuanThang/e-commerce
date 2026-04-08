@@ -38,7 +38,7 @@ ProductImage.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "product_variant",
+        model: "ProductVariant",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -60,7 +60,7 @@ ProductImage.init(
   {
     sequelize,
     modelName: "ProductImage",
-    tableName: "product_image",
+    tableName: "ProductImage",
     timestamps: false,
   },
 );

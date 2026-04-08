@@ -34,7 +34,7 @@ Carts.init(
   {
     sequelize,
     modelName: "Carts",
-    tableName: "carts",
+    tableName: "Carts",
     timestamps: false,
   },
 );

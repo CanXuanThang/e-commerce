@@ -33,6 +33,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const existingUser = await userService.getUserByEmail(req.body.email);
+
     if (existingUser) {
       return response.badRequest(res, null, "Email already exists");
     }

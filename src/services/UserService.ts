@@ -28,13 +28,16 @@ export interface IAuthRequest {
 const getAllUsers = async () => {
   return Users.findAll();
 };
+
 const getUserById = async (id: number) => {
   return Users.findByPk(id);
 };
+
 const createUser = async (user: ICreateUser) => {
   const hashPassword = await bcrypt.hash(user.password, 10);
   return Users.create({ ...user, password: hashPassword });
 };
+
 const updateUser = async (id: number, user: Partial<IUpdateUser>) => {
   const existingUser = await Users.findByPk(id);
   if (!existingUser) {
@@ -42,6 +45,7 @@ const updateUser = async (id: number, user: Partial<IUpdateUser>) => {
   }
   return existingUser.update(user);
 };
+
 const deleteUser = async (id: number) => {
   const existingUser = await Users.findByPk(id);
   if (!existingUser) {
@@ -49,6 +53,7 @@ const deleteUser = async (id: number) => {
   }
   return existingUser.destroy();
 };
+
 const getUserByEmail = async (email: string) => {
   return Users.findOne({ where: { email } });
 };

@@ -41,7 +41,7 @@ OrderItem.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "products",
+        model: "Products",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -59,7 +59,7 @@ OrderItem.init(
   {
     sequelize,
     modelName: "OrderItem",
-    tableName: "order_item",
+    tableName: "OrderItem",
     timestamps: false,
   },
 );

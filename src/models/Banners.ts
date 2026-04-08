@@ -40,7 +40,7 @@ Banners.init(
   {
     sequelize,
     modelName: "Banners",
-    tableName: "banners",
+    tableName: "Banners",
     timestamps: false,
   },
 );

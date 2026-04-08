@@ -50,7 +50,7 @@ Products.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "categories",
+        model: "Categories",
         key: "id",
       },
       onDelete: "CASCADE",
@@ -72,7 +72,7 @@ Products.init(
   {
     sequelize,
     modelName: "Products",
-    tableName: "products",
+    tableName: "Products",
     timestamps: false,
   },
 );
