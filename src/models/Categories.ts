@@ -38,6 +38,12 @@ Categories.init(
     parentId: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: "categories",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
   },
   {

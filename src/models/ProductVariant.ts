@@ -39,6 +39,12 @@ ProductVariant.init(
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "products",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
     colorName: {
       type: DataTypes.STRING,

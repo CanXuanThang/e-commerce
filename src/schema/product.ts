@@ -6,6 +6,7 @@ export const sizeSchema = z.object({
     .number("Quantity must be a number")
     .int("Quantity must be integer")
     .min(0, "Quantity cannot be negative"),
+  price: z.number("Price must be a number").min(0, "Price is required"),
 });
 
 export const imageSchema = z.object({
@@ -13,24 +14,10 @@ export const imageSchema = z.object({
   isPrimary: z.boolean().optional(),
 });
 
-export const variantSchema = z.object({
-  colorName: z.string().min(1, "Color name is required"),
-
-  colorCode: z.string().regex(/^#([0-9A-Fa-f]{3}){1,2}$/, "Invalid color hex"),
-
-  sku: z.string().min(1, "SKU is required"),
-
-  sizes: z.array(sizeSchema).min(1, "Variant must have at least one size"),
-
-  images: z.array(imageSchema).optional(),
-});
-
 export const createProductSchema = z.object({
   name: z.string().min(1, "Name is required"),
 
   description: z.string().optional(),
-
-  price: z.number("Price must be a number").positive("Price must be positive"),
 
   discount: z.number("Discount must be a number").min(0).max(100).optional(),
 
@@ -38,8 +25,26 @@ export const createProductSchema = z.object({
     .number("Category ID must be a number")
     .int()
     .positive("Category ID must be positive"),
+});
 
-  variants: z
-    .array(variantSchema)
-    .min(1, "Product must have at least one variant"),
+export const imageMetadataSchema = z.object({
+  fileIndex: z.number("fileIndex is required"),
+
+  sortOrder: z.number().optional(),
+
+  isPrimary: z.boolean().optional(),
+});
+
+export const variantSchema = z.object({
+  colorName: z.string().min(1, "colorName is required"),
+
+  colorCode: z.string().min(1, "colorCode is required"),
+
+  sku: z.string().min(1, "sku is required"),
+
+  isDefault: z.boolean().optional(),
+
+  images: z.array(imageMetadataSchema).optional(),
+
+  sizes: z.array(sizeSchema).min(1, "Variant must have at least one size"),
 });

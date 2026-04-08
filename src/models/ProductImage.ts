@@ -37,6 +37,12 @@ ProductImage.init(
     variantId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "product_variant",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
     imageUrl: {
       type: DataTypes.STRING,

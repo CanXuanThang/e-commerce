@@ -2,14 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import { productImageService } from "../services/ProductImageService";
 import { response } from "../utils/response";
 
-const getImagesByProductId = async (
+const getImagesByVariantId = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const products = await productImageService.getImagesByProductId(
-      parseInt(req.params.productId as string),
+    const products = await productImageService.getImagesByVariantId(
+      parseInt(req.params.variantId as string),
     );
     return response.ok(res, products, "Get all products successfully");
   } catch (error) {
@@ -30,7 +30,7 @@ const createProductImages = async (
     const files = req.files as Express.Multer.File[];
 
     const data = files.map((file) => ({
-      productId: req.body.productId,
+      variantId: req.body.variantId,
       imageUrl: file.path,
     }));
 
@@ -57,7 +57,7 @@ const deleteProductImage = async (
 };
 
 export const productImageController = {
-  getImagesByProductId,
+  getImagesByVariantId,
   createProductImages,
   deleteProductImage,
 };

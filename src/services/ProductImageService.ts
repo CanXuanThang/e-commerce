@@ -2,12 +2,12 @@ import cloudinary from "../config/cloudinary";
 import { ProductImage } from "../models/ProductImage";
 import { ApiError } from "../utils/apiError";
 
-const getImagesByProductId = async (productId: number) => {
-  return ProductImage.findAll({ where: { productId } });
+const getImagesByVariantId = async (variantId: number) => {
+  return ProductImage.findAll({ where: { variantId } });
 };
 
-const createProductImage = async (productId: number, imageUrl: string) => {
-  return ProductImage.create({ productId, imageUrl });
+const createProductImage = async (variantId: number, imageUrl: string) => {
+  return ProductImage.create({ variantId, imageUrl });
 };
 
 const deleteProductImage = async (id: number) => {
@@ -31,7 +31,7 @@ const createMany = async (data: any[]) => {
 };
 
 export const productImageService = {
-  getImagesByProductId,
+  getImagesByVariantId,
   createMany,
   createProductImage,
   deleteProductImage,

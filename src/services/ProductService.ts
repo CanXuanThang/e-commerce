@@ -5,36 +5,28 @@ import { ApiError } from "../utils/apiError";
 import sequelize from "../database/database";
 import { ProductVariant } from "../models/ProductVariant";
 import { ProductSize } from "../models/ProductSize";
-
-import { ProductSizeCreationAttributes } from "../models/ProductSize";
-
-import { ProductImageCreationAttributes } from "../models/ProductImage";
-
-export interface SizeInput {
-  size: string;
-  quantity: number;
-}
+import { CreateSize } from "./ProductSizeService";
 
 export interface ImageInput {
   imageUrl: string;
   isPrimary?: boolean;
+  sortOrder?: number;
 }
 
 export interface VariantInput {
   colorName: string;
   colorCode: string;
   sku: string;
-  sizes: SizeInput[];
+  sizes: CreateSize[];
   images?: ImageInput[];
+  isDefault?: boolean;
 }
 
 export interface CreateProductInput {
   name: string;
   description?: string;
   categoryId: number;
-  price: number;
   discount: number;
-  variants: VariantInput[];
 }
 
 // ================= GET ALL PRODUCTS =================
@@ -42,7 +34,7 @@ export interface CreateProductInput {
 const getAllProducts = async () => {
   try {
     return Products.findAll({
-      attributes: ["id", "name", "price", "discount"],
+      attributes: ["id", "name", "discount"],
       include: [
         {
           model: Categories,
@@ -59,6 +51,11 @@ const getAllProducts = async () => {
               as: "images",
               attributes: ["id", "imageUrl", "isPrimary"],
             },
+            {
+              model: ProductSize,
+              as: "items",
+              attributes: ["id", "size", "quantity", "price"],
+            },
           ],
         },
       ],
@@ -71,76 +68,44 @@ const getAllProducts = async () => {
 // ================= CREATE PRODUCT =================
 
 const createProduct = async (data: CreateProductInput) => {
-  const transaction = await sequelize.transaction();
+  return Products.create(data);
+};
 
-  try {
-    // create product
-    const product = await Products.create(
-      {
-        name: data.name,
-        description: data.description,
-        categoryId: data.categoryId,
-        price: data.price,
-        discount: data.discount,
-      },
-      { transaction },
-    );
+const createProductDetails = async (
+  productId: number,
+  data: VariantInput[],
+) => {
+  return sequelize.transaction(async (transaction) => {
+    for (const variant of data) {
+      const newVariant = await ProductVariant.create(
+        {
+          colorCode: variant.colorCode,
+          colorName: variant.colorName,
+          sku: variant.sku,
+          isDefault: variant.isDefault ?? false,
+          productId,
+        },
+        { transaction },
+      );
 
-    // create variants
-    const createdVariants = await ProductVariant.bulkCreate(
-      data.variants.map((variant: VariantInput) => ({
-        productId: product.id,
-        colorName: variant.colorName,
-        colorCode: variant.colorCode,
-        sku: variant.sku,
-      })),
-      {
-        transaction,
-        returning: true,
-      },
-    );
+      const images = variant.images?.map((img) => ({
+        variantId: newVariant.id,
+        imageUrl: img.imageUrl,
+        sortOrder: img.sortOrder ?? 0,
+        isPrimary: img.isPrimary ?? false,
+      }));
+      if (images && images.length > 0) {
+        await ProductImage.bulkCreate(images, { transaction });
+      }
 
-    const sizesPayload: ProductSizeCreationAttributes[] = [];
-    const imagesPayload: ProductImageCreationAttributes[] = [];
+      const sizes = variant.sizes.map((size) => ({
+        ...size,
+        variantId: newVariant.id,
+      }));
 
-    createdVariants.forEach((variant, index) => {
-      const variantData = data.variants[index];
-
-      // sizes
-      variantData.sizes.forEach((size: SizeInput) => {
-        sizesPayload.push({
-          variantId: variant.id,
-          size: size.size,
-          quantity: size.quantity,
-        });
-      });
-
-      // images
-      variantData.images?.forEach((image: ImageInput, imageIndex: number) => {
-        imagesPayload.push({
-          variantId: variant.id,
-          imageUrl: image.imageUrl,
-          sortOrder: imageIndex,
-          isPrimary: image.isPrimary ?? false,
-        });
-      });
-    });
-
-    if (sizesPayload.length) {
-      await ProductSize.bulkCreate(sizesPayload, { transaction });
+      await ProductSize.bulkCreate(sizes, { transaction });
     }
-
-    if (imagesPayload.length) {
-      await ProductImage.bulkCreate(imagesPayload, { transaction });
-    }
-
-    await transaction.commit();
-
-    return product;
-  } catch (error) {
-    await transaction.rollback();
-    throw error;
-  }
+  });
 };
 
 // ================= GET PRODUCT BY ID =================
@@ -162,7 +127,7 @@ const getProductById = async (id: number) => {
           {
             model: ProductSize,
             as: "sizes",
-            attributes: ["id", "size", "quantity"],
+            attributes: ["id", "size", "quantity", "price"],
           },
           {
             model: ProductImage,
@@ -223,10 +188,17 @@ const getProductsByCategoryId = async (categoryId: number) => {
       {
         model: ProductVariant,
         as: "variants",
+        attributes: ["id", "colorName", "colorCode", "sku", "isDefault"],
         include: [
+          {
+            model: ProductSize,
+            as: "sizes",
+            attributes: ["id", "size", "quantity", "price"],
+          },
           {
             model: ProductImage,
             as: "images",
+            attributes: ["id", "imageUrl", "isPrimary", "sortOrder"],
           },
         ],
       },
@@ -243,4 +215,5 @@ export const productService = {
   updateProduct,
   deleteProduct,
   getProductsByCategoryId,
+  createProductDetails,
 };

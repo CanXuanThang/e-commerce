@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { response } from "../utils/response";
-import { productService } from "../services/ProductService";
+import {
+  CreateProductInput,
+  productService,
+  VariantInput,
+} from "../services/ProductService";
 
 const getAllProducts = async (
   _req: Request,
@@ -22,34 +26,67 @@ const createProduct = async (
   next: NextFunction,
 ) => {
   try {
-    const files = req.files as Express.Multer.File[];
+    const { name, description, categoryId, discount }: CreateProductInput =
+      req.body;
+    const product = await productService.createProduct({
+      name,
+      description,
+      categoryId,
+      discount,
+    });
 
-    let uploadedImages: string[] = [];
-
-    if (files?.length) {
-      uploadedImages = await Promise.all(files.map((file) => file.path));
+    if (product) {
+      return response.serverError(res, null);
     }
 
-    const variants = JSON.parse(req.body.variants);
-
-    // gán image theo variant index
-    variants.forEach((variant: any, index: number) => {
-      variant.images = uploadedImages[index]
-        ? [
-            {
-              imageUrl: uploadedImages[index],
-              isPrimary: true,
-            },
-          ]
-        : [];
-    });
-
-    const product = await productService.createProduct({
-      ...req.body,
-      variants,
-    });
-
     return response.ok(res, product, "Product created successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+const createProductDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const productId = Number(req.params.productId);
+
+    const variants: VariantInput[] =
+      typeof req.body.variants === "string"
+        ? JSON.parse(req.body.variants)
+        : req.body;
+
+    if (!Array.isArray(variants)) {
+      return response.badRequest(res, null, "variants must be an array");
+    }
+
+    const files = req.files as Express.Multer.File[];
+
+    if (files?.length) {
+      variants.forEach((variant: any) => {
+        if (!variant.images?.length) return;
+
+        variant.images = variant.images
+          .map((img: any) => {
+            const file = files[img.fileIndex];
+
+            if (!file) return null;
+
+            return {
+              imageUrl: file.path,
+              sortOrder: img.sortOrder ?? 0,
+              isPrimary: img.isPrimary ?? false,
+            };
+          })
+          .filter(Boolean);
+      });
+    }
+
+    await productService.createProductDetails(productId, variants);
+
+    return response.ok(res, null, "Create product details successfully");
   } catch (error) {
     next(error);
   }
@@ -152,4 +189,5 @@ export const productController = {
   updateProduct,
   deleteProduct,
   getProductsByCategoryId,
+  createProductDetails,
 };

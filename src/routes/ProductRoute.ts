@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { productController } from "../controllers/ProductController";
 import { validate } from "../middlewares/validate";
-import { createProductSchema } from "../schema/product";
+import { createProductSchema, variantSchema } from "../schema/product";
 import { checkIdSchema } from "../schema/common";
 import { checkRole, verifyToken } from "../middlewares/auth";
 
@@ -24,7 +24,7 @@ productRoute.get(path, productController.getAllProducts);
  * @swagger
  * /products:
  *   post:
- *     summary: Create new product
+ *     summary: Create a new product
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -36,82 +36,29 @@ productRoute.get(path, productController.getAllProducts);
  *             type: object
  *             required:
  *               - name
- *               - price
  *               - categoryId
- *               - variants
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Áo thun nam"
- *
+ *                 example: Áo thun nam
  *               description:
  *                 type: string
- *                 example: "Cotton 100%"
- *
- *               price:
- *                 type: number
- *                 example: 199000
- *
+ *                 example: Áo thun cotton 100%
  *               discount:
  *                 type: number
  *                 example: 10
- *
  *               categoryId:
  *                 type: integer
  *                 example: 1
- *
- *               variants:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required:
- *                     - colorName
- *                     - colorCode
- *                     - sku
- *                     - sizes
- *
- *                   properties:
- *                     colorName:
- *                       type: string
- *                       example: Red
- *
- *                     colorCode:
- *                       type: string
- *                       example: "#FF0000"
- *
- *                     sku:
- *                       type: string
- *                       example: TS-RED
- *
- *                     sizes:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           size:
- *                             type: string
- *                             example: M
- *
- *                           quantity:
- *                             type: integer
- *                             example: 10
- *
- *                     images:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           imageUrl:
- *                             type: string
- *                             example: https://image.com/a.jpg
- *
- *                           isPrimary:
- *                             type: boolean
- *                             example: true
- *
  *     responses:
  *       201:
  *         description: Product created successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  */
 productRoute.post(
   path,
@@ -184,6 +131,98 @@ productRoute.delete(
   checkRole("admin"),
   validate({ params: checkIdSchema }),
   productController.deleteProduct,
+);
+
+/**
+ * @swagger
+ * /products/{productId}/details:
+ *   post:
+ *     summary: Create product details (variants, sizes, images)
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the product
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - variants
+ *             properties:
+ *               variants:
+ *                 type: string
+ *                 description: JSON string of variant array
+ *                 example: |
+ *                   [
+ *                     {
+ *                       "colorName": "Red",
+ *                       "colorCode": "#ff0000",
+ *                       "sku": "RED001",
+ *                       "isDefault": true,
+ *                       "images": [
+ *                         {
+ *                           "fileIndex": 0,
+ *                           "sortOrder": 1,
+ *                           "isPrimary": true
+ *                         }
+ *                       ],
+ *                       "sizes": [
+ *                         {
+ *                           "size": "M",
+ *                           "price": 100000,
+ *                           "quantity": 10
+ *                         }
+ *                       ]
+ *                     }
+ *                   ]
+ *
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Upload variant images
+ *
+ *     responses:
+ *       200:
+ *         description: Product details created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Create product details successfully
+ *
+ *       400:
+ *         description: Invalid request body
+ *
+ *       401:
+ *         description: Unauthorized
+ *
+ *       403:
+ *         description: Forbidden
+ */
+productRoute.post(
+  path,
+  verifyToken,
+  checkRole("admin"),
+  validate({ body: variantSchema }),
+  productController.createProductDetails,
 );
 
 export default productRoute;

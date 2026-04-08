@@ -8,13 +8,13 @@ const path = "/product-images";
 
 /**
  * @swagger
- * /product-images/{productId}:
+ * /product-images/{variantId}:
  *   get:
- *     summary: Lấy danh sách ảnh theo productId
+ *     summary: Lấy danh sách ảnh theo variantId
  *     tags: [ProductImages]
  *     parameters:
  *       - in: path
- *         name: productId
+ *         name: variantId
  *         required: true
  *         schema:
  *           type: integer
@@ -39,15 +39,15 @@ const path = "/product-images";
  *                         type: integer
  *                       imageUrl:
  *                         type: string
- *                       productId:
+ *                       variantId:
  *                         type: integer
  *                 message:
  *                   type: string
  *                   example: Get images successfully
  */
 productImageRoute.get(
-  `${path}/:productId`,
-  productImageController.getImagesByProductId,
+  `${path}/:variantId`,
+  productImageController.getImagesByVariantId,
 );
 
 /**
@@ -63,10 +63,10 @@ productImageRoute.get(
  *           schema:
  *             type: object
  *             required:
- *               - productId
+ *               - variantId
  *               - image
  *             properties:
- *               productId:
+ *               variantId:
  *                 type: integer
  *                 example: 1
  *               image:
@@ -94,7 +94,7 @@ productImageRoute.get(
  *                         type: integer
  *                       imageUrl:
  *                         type: string
- *                       productId:
+ *                       variantId:
  *                         type: integer
  *                 message:
  *                   type: string

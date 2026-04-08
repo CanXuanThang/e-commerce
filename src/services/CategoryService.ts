@@ -5,6 +5,10 @@ const getAll = async () => {
   return Categories.findAll();
 };
 
+const findById = async (id: number) => {
+  return Categories.findByPk(id);
+};
+
 const getCategoryByName = async (name: string) => {
   return Categories.findOne({ where: { name } });
 };
@@ -39,4 +43,5 @@ export const categoryService = {
   getCategoryByName,
   createCategory,
   updateCategory,
+  findById,
 };
