@@ -18,6 +18,8 @@ module.exports = {
           model: "Orders",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       method: {
         type: Sequelize.ENUM("momo", "paypal", "credit_card"),

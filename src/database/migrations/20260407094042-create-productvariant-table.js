@@ -3,47 +3,56 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Orders", {
+    await queryInterface.createTable("ProductVariant", {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
+        unique: true,
+        allowNull: false,
       },
-      userId: {
+
+      productId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Users",
+          model: "Products",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      totalAmount: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-      },
-      status: {
-        type: Sequelize.ENUM("pending", "completed", "cancelled", "shipping"),
-        allowNull: false,
-      },
-      address: {
+
+      colorName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      phone: {
+
+      colorCode: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      createdAt: {
-        type: Sequelize.DATE,
+
+      sku: {
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        unique: true,
       },
+
+      isDefault: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+    });
+
+    await queryInterface.addConstraint("ProductVariant", {
+      fields: ["productId", "colorName"],
+      type: "unique",
+      name: "unique_product_color",
     });
   },
 
-  async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("Orders");
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("ProductVariant");
   },
 };

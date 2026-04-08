@@ -5,12 +5,10 @@ export interface ProductAttributes {
   id: number;
   name: string;
   description?: string;
-  price: number;
-  size: string;
-  quantity: number;
   categoryId: number;
   createdAt?: Date;
   updatedAt?: Date;
+  discount: number;
 }
 
 export interface ProductCreationAttributes extends Optional<
@@ -25,10 +23,8 @@ export class Products
   public id!: number;
   public name!: string;
   public description?: string;
-  public price!: number;
-  public size!: string;
-  public quantity!: number;
   public categoryId!: number;
+  public discount!: number;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -50,18 +46,6 @@ Products.init(
     description: {
       type: DataTypes.STRING,
     },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    size: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     categoryId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -71,6 +55,10 @@ Products.init(
       },
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
+    },
+    discount: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     createdAt: {
       type: DataTypes.DATE,

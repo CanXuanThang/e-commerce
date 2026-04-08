@@ -18,6 +18,8 @@ module.exports = {
           model: "Users",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       productId: {
         type: Sequelize.INTEGER,
@@ -26,6 +28,8 @@ module.exports = {
           model: "Products",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       rating: {
         type: Sequelize.INTEGER,

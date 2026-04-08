@@ -12,11 +12,11 @@ const path = "/products";
  * @swagger
  * /products:
  *   get:
- *     summary: Lấy danh sách sản phẩm
+ *     summary: Get all products
  *     tags: [Products]
  *     responses:
  *       200:
- *         description: Thành công
+ *         description: Success
  */
 productRoute.get(path, productController.getAllProducts);
 
@@ -24,8 +24,10 @@ productRoute.get(path, productController.getAllProducts);
  * @swagger
  * /products:
  *   post:
- *     summary: Tạo sản phẩm mới
+ *     summary: Create new product
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -35,39 +37,87 @@ productRoute.get(path, productController.getAllProducts);
  *             required:
  *               - name
  *               - price
- *               - size
- *               - quantity
+ *               - categoryId
+ *               - variants
  *             properties:
  *               name:
  *                 type: string
  *                 example: "Áo thun nam"
+ *
  *               description:
  *                 type: string
- *                 example: "Áo cotton 100%"
+ *                 example: "Cotton 100%"
+ *
  *               price:
  *                 type: number
- *                 format: float
  *                 example: 199000
- *               size:
- *                 type: string
- *                 example: "M"
- *               quantity:
- *                 type: integer
- *                 example: 50
+ *
+ *               discount:
+ *                 type: number
+ *                 example: 10
+ *
  *               categoryId:
  *                 type: integer
  *                 example: 1
+ *
+ *               variants:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - colorName
+ *                     - colorCode
+ *                     - sku
+ *                     - sizes
+ *
+ *                   properties:
+ *                     colorName:
+ *                       type: string
+ *                       example: Red
+ *
+ *                     colorCode:
+ *                       type: string
+ *                       example: "#FF0000"
+ *
+ *                     sku:
+ *                       type: string
+ *                       example: TS-RED
+ *
+ *                     sizes:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           size:
+ *                             type: string
+ *                             example: M
+ *
+ *                           quantity:
+ *                             type: integer
+ *                             example: 10
+ *
+ *                     images:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           imageUrl:
+ *                             type: string
+ *                             example: https://image.com/a.jpg
+ *
+ *                           isPrimary:
+ *                             type: boolean
+ *                             example: true
+ *
  *     responses:
  *       201:
- *         description: Tạo sản phẩm thành công
- *       400:
- *         description: Dữ liệu không hợp lệ
+ *         description: Product created successfully
  */
 productRoute.post(
   path,
-  validate({ body: createProductSchema }),
   verifyToken,
   checkRole("admin"),
+  validate({ body: createProductSchema }),
   productController.createProduct,
 );
 
@@ -75,7 +125,7 @@ productRoute.post(
  * @swagger
  * /products/{id}:
  *   get:
- *     summary: Lấy chi tiết sản phẩm theo id
+ *     summary: Get product detail by id
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -83,11 +133,6 @@ productRoute.post(
  *         required: true
  *         schema:
  *           type: integer
- *     responses:
- *       200:
- *         description: Thành công
- *       404:
- *         description: Không tìm thấy sản phẩm
  */
 productRoute.get(
   `${path}/:id`,
@@ -99,44 +144,16 @@ productRoute.get(
  * @swagger
  * /products/{id}:
  *   put:
- *     summary: Cập nhật sản phẩm theo id
+ *     summary: Update product
  *     tags: [Products]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               price:
- *                 type: number
- *               size:
- *                 type: string
- *               quantity:
- *                 type: integer
- *               categoryId:
- *                 type: integer
- *     responses:
- *       200:
- *         description: Cập nhật thành công
- *       404:
- *         description: Không tìm thấy sản phẩm
+ *     security:
+ *       - bearerAuth: []
  */
 productRoute.put(
   `${path}/:id`,
-  validate({ params: checkIdSchema, body: createProductSchema }),
   verifyToken,
   checkRole("admin"),
+  validate({ params: checkIdSchema, body: createProductSchema }),
   productController.updateProduct,
 );
 
@@ -144,21 +161,11 @@ productRoute.put(
  * @swagger
  * /products/category/{categoryId}:
  *   get:
- *     summary: Lấy sản phẩm theo categoryId
+ *     summary: Get products by categoryId
  *     tags: [Products]
- *     parameters:
- *       - in: path
- *         name: categoryId
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Thành công
  */
 productRoute.get(
   `${path}/category/:categoryId`,
-  //   validate({ params: checkIdSchema }),
   productController.getProductsByCategoryId,
 );
 
@@ -166,25 +173,16 @@ productRoute.get(
  * @swagger
  * /products/{id}:
  *   delete:
- *     summary: Xóa sản phẩm theo id
+ *     summary: Delete product
  *     tags: [Products]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Xóa thành công
- *       404:
- *         description: Không tìm thấy sản phẩm
+ *     security:
+ *       - bearerAuth: []
  */
 productRoute.delete(
   `${path}/:id`,
-  validate({ params: checkIdSchema }),
   verifyToken,
   checkRole("admin"),
+  validate({ params: checkIdSchema }),
   productController.deleteProduct,
 );
 

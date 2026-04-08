@@ -6,9 +6,12 @@ import { Orders } from "./Orders";
 import { Payments } from "./Payment";
 import { ProductImage } from "./ProductImage";
 import { Products } from "./Products";
+import { ProductSize } from "./ProductSize";
+import { ProductVariant } from "./ProductVariant";
 import { Reviews } from "./Reviews";
 import { Users } from "./Users";
 
+// ==================== Users ====================
 Users.hasOne(Carts, {
   foreignKey: "userId",
   as: "cart",
@@ -24,6 +27,7 @@ Users.hasMany(Reviews, {
   as: "reviews",
 });
 
+// ==================== Carts ====================
 Carts.belongsTo(Users, {
   foreignKey: "userId",
   as: "user",
@@ -34,6 +38,7 @@ Carts.hasMany(CartItem, {
   as: "items",
 });
 
+// ==================== CartItem ====================
 CartItem.belongsTo(Carts, {
   foreignKey: "cartId",
   as: "cart",
@@ -44,6 +49,17 @@ CartItem.belongsTo(Products, {
   as: "product",
 });
 
+CartItem.belongsTo(ProductVariant, {
+  foreignKey: "variantId",
+  as: "variant",
+});
+
+CartItem.belongsTo(ProductSize, {
+  foreignKey: "sizeId",
+  as: "size",
+});
+
+// ==================== Categories ====================
 Categories.hasMany(Products, {
   foreignKey: "categoryId",
   as: "products",
@@ -59,6 +75,7 @@ Categories.belongsTo(Categories, {
   as: "parent",
 });
 
+// ==================== Orders ====================
 Orders.belongsTo(Users, {
   foreignKey: "userId",
   as: "user",
@@ -74,6 +91,7 @@ Orders.hasOne(Payments, {
   as: "payment",
 });
 
+// ==================== OrderItem ====================
 OrderItem.belongsTo(Orders, {
   foreignKey: "orderId",
   as: "order",
@@ -84,9 +102,33 @@ OrderItem.belongsTo(Products, {
   as: "product",
 });
 
+OrderItem.belongsTo(ProductVariant, {
+  foreignKey: "variantId",
+  as: "variant",
+});
+
+OrderItem.belongsTo(ProductSize, {
+  foreignKey: "sizeId",
+  as: "size",
+});
+
+// ==================== Payments ====================
 Payments.belongsTo(Orders, {
   foreignKey: "orderId",
   as: "order",
+});
+
+// ==================== Products ====================
+Products.belongsTo(Categories, {
+  foreignKey: "categoryId",
+  as: "category",
+});
+
+Products.hasMany(ProductVariant, {
+  foreignKey: "productId",
+  as: "variants",
+  onDelete: "CASCADE",
+  hooks: true,
 });
 
 Products.hasMany(CartItem, {
@@ -99,28 +141,44 @@ Products.hasMany(OrderItem, {
   as: "orderItems",
 });
 
-Products.belongsTo(Categories, {
-  foreignKey: "categoryId",
-  as: "category",
-});
-
-Products.hasMany(ProductImage, {
-  foreignKey: "productId",
-  as: "images",
-  onDelete: "CASCADE",
-  hooks: true,
-});
-
 Products.hasMany(Reviews, {
   foreignKey: "productId",
   as: "reviews",
 });
 
-ProductImage.belongsTo(Products, {
+// ==================== ProductVariant ====================
+ProductVariant.belongsTo(Products, {
   foreignKey: "productId",
   as: "product",
 });
 
+ProductVariant.hasMany(ProductImage, {
+  foreignKey: "variantId",
+  as: "images",
+  onDelete: "CASCADE",
+  hooks: true,
+});
+
+ProductVariant.hasMany(ProductSize, {
+  foreignKey: "variantId",
+  as: "sizes",
+  onDelete: "CASCADE",
+  hooks: true,
+});
+
+// ==================== ProductImage ====================
+ProductImage.belongsTo(ProductVariant, {
+  foreignKey: "variantId",
+  as: "variant",
+});
+
+// ==================== ProductSize ====================
+ProductSize.belongsTo(ProductVariant, {
+  foreignKey: "variantId",
+  as: "variant",
+});
+
+// ==================== Reviews ====================
 Reviews.belongsTo(Products, {
   foreignKey: "productId",
   as: "product",

@@ -11,17 +11,27 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      productId: {
+      variantId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Products",
+          model: "ProductVariant",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       imageUrl: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      sortOrder: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      isPrimary: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
     });
   },

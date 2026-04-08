@@ -1,59 +1,62 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../database/database";
 
-export interface OrderItemAttributes {
+export interface ProductSizeAttributes {
   id: number;
-  orderId: number;
-  productId: number;
+  variantId: number;
+  size: string;
   quantity: number;
   price: number;
 }
 
-export interface OrderItemCreationAttributes extends Optional<
-  OrderItemAttributes,
+export interface ProductSizeCreationAttributes extends Optional<
+  ProductSizeAttributes,
   "id"
 > {}
 
-export class OrderItem
-  extends Model<OrderItemAttributes, OrderItemCreationAttributes>
-  implements OrderItemAttributes
+export class ProductSize
+  extends Model<ProductSizeAttributes, ProductSizeCreationAttributes>
+  implements ProductSizeAttributes
 {
   public id!: number;
-  public orderId!: number;
-  public productId!: number;
+  public variantId!: number;
+  public size!: string;
   public quantity!: number;
   public price!: number;
 }
 
-OrderItem.init(
+ProductSize.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+      unique: true,
       allowNull: false,
     },
-    orderId: {
+    variantId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    productId: {
-      type: DataTypes.INTEGER,
+    size: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
     price: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
   },
   {
     sequelize,
-    modelName: "OrderItem",
-    tableName: "order_item",
+    modelName: "ProductSize",
+    tableName: "product_size",
     timestamps: false,
   },
 );

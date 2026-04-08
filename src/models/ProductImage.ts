@@ -3,13 +3,15 @@ import sequelize from "../database/database";
 
 export interface ProductImageAttributes {
   id: number;
-  productId: number;
+  variantId: number;
   imageUrl: string;
+  sortOrder?: number;
+  isPrimary?: boolean;
 }
 
 export interface ProductImageCreationAttributes extends Optional<
   ProductImageAttributes,
-  "id"
+  "id" | "sortOrder" | "isPrimary"
 > {}
 
 export class ProductImage
@@ -17,8 +19,10 @@ export class ProductImage
   implements ProductImageAttributes
 {
   public id!: number;
-  public productId!: number;
+  public variantId!: number;
   public imageUrl!: string;
+  public sortOrder!: number;
+  public isPrimary!: boolean;
 }
 
 ProductImage.init(
@@ -30,7 +34,7 @@ ProductImage.init(
       unique: true,
       allowNull: false,
     },
-    productId: {
+    variantId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -38,11 +42,19 @@ ProductImage.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    sortOrder: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    isPrimary: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
     modelName: "ProductImage",
-    tableName: "productimage",
+    tableName: "product_image",
     timestamps: false,
   },
 );

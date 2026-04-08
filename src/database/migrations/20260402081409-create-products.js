@@ -18,17 +18,23 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
       },
-      price: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-      },
-      size: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       quantity: {
         type: Sequelize.INTEGER,
         allowNull: false,
+      },
+      discount: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      categoryId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "Categories",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         type: Sequelize.DATE,
