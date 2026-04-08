@@ -11,15 +11,15 @@ const swaggerOptions = {
 
     servers: [
       {
-        url: "http://localhost:3000/api/v1",
+        url: "https://e-commerce-production-eaaf.up.railway.app/api/v1",
       },
     ],
 
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: "http",
-          scheme: "bearer",
+          type: "https",
+          scheme: "bearerAuth",
           bearerFormat: "JWT",
         },
       },
