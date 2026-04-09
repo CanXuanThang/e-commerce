@@ -8,14 +8,22 @@ const createReview = async (
   next: NextFunction,
 ) => {
   try {
-    const { userId, productId, rating, comment } = req.body;
-    const review = await reviewService.createReview(
-      userId,
-      productId,
-      rating,
-      comment,
-    );
-    return response.ok(res, review, "Review created successfully");
+    const productId = Number(req.params.productId);
+    const { rating, comment } = req.body;
+    console.log(productId);
+
+    const userId = req.user?.id;
+    if (userId) {
+      const review = await reviewService.createReview(
+        userId,
+        productId,
+        rating,
+        comment,
+      );
+      return response.ok(res, review, "Review created successfully");
+    }
+
+    return response.notFound(res, null, "User not found");
   } catch (error) {
     next(error);
   }

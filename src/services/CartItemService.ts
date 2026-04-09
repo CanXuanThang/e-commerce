@@ -6,6 +6,9 @@ const addProductToCart = async (
   cartId: number,
   productId: number,
   quantity: number,
+  variantId: number,
+  sizeId: number,
+  price: number,
 ) => {
   const existingCartItem = await CartItem.findOne({
     where: { cartId, productId },
@@ -14,7 +17,14 @@ const addProductToCart = async (
     existingCartItem.quantity += quantity;
     return existingCartItem.save();
   } else {
-    return CartItem.create({ cartId, productId, quantity });
+    return CartItem.create({
+      cartId,
+      productId,
+      quantity,
+      variantId,
+      sizeId,
+      price,
+    });
   }
 };
 

@@ -6,6 +6,9 @@ export interface CartItemAttributes {
   cartId: number;
   productId: number;
   quantity: number;
+  variantId: number;
+  sizeId: number;
+  price: number;
 }
 
 export interface CartItemCreationAttributes extends Optional<
@@ -21,6 +24,9 @@ export class CartItem
   public cartId!: number;
   public productId!: number;
   public quantity!: number;
+  public variantId!: number;
+  public sizeId!: number;
+  public price!: number;
 }
 
 CartItem.init(
@@ -33,6 +39,12 @@ CartItem.init(
     cartId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "Carts",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
     productId: {
       type: DataTypes.INTEGER,
@@ -44,16 +56,39 @@ CartItem.init(
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     },
+    variantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "ProductVariant",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    },
+    sizeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "ProductSize",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 1,
+    },
+    price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
     sequelize,
-    modelName: "CartItem",
-    tableName: "CartItem",
+    modelName: "CartItems",
+    tableName: "CartItems",
     timestamps: false,
   },
 );

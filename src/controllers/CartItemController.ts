@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { response } from "../utils/response";
 import { cartItemService } from "../services/CartItemService";
+import { productSizeService } from "../services/ProductSizeService";
 
 const addProductToCart = async (
   req: Request,
@@ -8,15 +9,27 @@ const addProductToCart = async (
   next: NextFunction,
 ) => {
   try {
-    const { productId, quantity } = req.body;
+    const { productId, quantity, variantId, sizeId, price } = req.body;
     const userId = req.user?.id;
     if (userId) {
       const cart = await cartItemService.getCartByUserId(userId);
       if (cart) {
+        const checkQuantity = await productSizeService.checkQuantityById(
+          productId,
+          quantity,
+        );
+
+        if (!checkQuantity) {
+          return response.conflict(res, "Not enough stock available");
+        }
+
         const cartItem = await cartItemService.addProductToCart(
           cart.id,
           productId,
           quantity,
+          variantId,
+          sizeId,
+          price,
         );
         return response.ok(res, cartItem, "Product added to cart successfully");
       }

@@ -5,6 +5,7 @@ import {
   getReviewsByProductIdSchema,
 } from "../schema/review";
 import { validate } from "../middlewares/validate";
+import { verifyToken } from "../middlewares/auth";
 
 const reviewRoute = Router();
 const path = "/reviews";
@@ -42,10 +43,17 @@ const path = "/reviews";
 
 /**
  * @swagger
- * /reviews:
+ * /reviews/{productId}:
  *   post:
  *     summary: Tạo đánh giá sản phẩm
  *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID sản phẩm
  *     requestBody:
  *       required: true
  *       content:
@@ -53,10 +61,6 @@ const path = "/reviews";
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: integer
- *               productId:
- *                 type: integer
  *               rating:
  *                 type: integer
  *                 example: 5
@@ -78,8 +82,9 @@ reviewRoute.get(
   reviewController.getReviewsByProductId,
 );
 reviewRoute.post(
-  path,
+  `${path}/:productId`,
   validate({ body: createReviewSchema }),
+  verifyToken,
   reviewController.createReview,
 );
 

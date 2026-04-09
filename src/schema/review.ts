@@ -1,8 +1,6 @@
 import z from "zod";
 
 export const createReviewSchema = z.object({
-  userId: z.number().int().positive("User ID must be a positive integer"),
-  productId: z.number().int().positive("Product ID must be a positive integer"),
   rating: z
     .number()
     .int()
@@ -12,5 +10,8 @@ export const createReviewSchema = z.object({
 });
 
 export const getReviewsByProductIdSchema = z.object({
-  productId: z.number().int().positive("Product ID must be a positive integer"),
+  productId: z.coerce
+    .number()
+    .int()
+    .positive("Product ID must be a positive integer"),
 });

@@ -5,6 +5,7 @@ import {
   errorResponse,
   unauthorizedResponse,
   notHavePermissionResponse,
+  conflictResponse,
 } from "../constants/response";
 const ok = <T>(res: Response, data: T, message = "Success") => {
   const response = successResponse(data, message);
@@ -39,6 +40,11 @@ const forbidden = <T>(res: Response, message = "Access forbidden") => {
   return res.status(StatusCodes.FORBIDDEN).json(response);
 };
 
+const conflict = (res: Response, message = "Conflict !") => {
+  const response = conflictResponse(message);
+  return res.status(StatusCodes.CONFLICT).jsonp(response);
+};
+
 export const response = {
   ok,
   notFound,
@@ -47,4 +53,5 @@ export const response = {
   unauthorization,
   notHavePermission,
   forbidden,
+  conflict,
 };

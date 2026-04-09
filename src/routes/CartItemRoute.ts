@@ -4,6 +4,7 @@ import { validate } from "../middlewares/validate";
 import { cartItemSchema } from "../schema/cartItem";
 import { checkIdSchema } from "../schema/common";
 import { verifyToken } from "../middlewares/auth";
+import z from "zod";
 
 const cartItemRoute = Router();
 const path = "/cart-items";
@@ -17,17 +18,10 @@ const path = "/cart-items";
 
 /**
  * @swagger
- * /cart-items/{userId}:
+ * /cart-items:
  *   get:
  *     summary: Lấy danh sách sản phẩm theo userId
  *     tags: [CartItems]
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID của giỏ hàng
  *     responses:
  *       200:
  *         description: Lấy danh sách cart items thành công
@@ -46,16 +40,22 @@ const path = "/cart-items";
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: integer
  *               productId:
  *                 type: integer
  *               quantity:
  *                 type: integer
+ *               variantId:
+ *                 type: integer
+ *               sizeId:
+ *                 type: integer
+ *               price:
+ *                 type: integer
  *             required:
- *               - userUd
  *               - productId
  *               - quantity
+ *               - variantId
+ *               - sizeId
+ *               - price
  *     responses:
  *       201:
  *         description: Thêm sản phẩm vào giỏ thành công
@@ -81,8 +81,6 @@ const path = "/cart-items";
  *           schema:
  *             type: object
  *             properties:
- *               productId:
- *                 type: integer
  *               quantity:
  *                 type: integer
  *     responses:
@@ -119,12 +117,7 @@ const path = "/cart-items";
  *         description: Xóa toàn bộ cart items thành công
  */
 
-cartItemRoute.get(
-  `${path}/:cartId`,
-  validate({ params: checkIdSchema }),
-  verifyToken,
-  cartItemController.getCartItemsByCartId,
-);
+cartItemRoute.get(path, verifyToken, cartItemController.getCartItemsByCartId);
 cartItemRoute.post(
   path,
   validate({ body: cartItemSchema }),
@@ -133,7 +126,16 @@ cartItemRoute.post(
 );
 cartItemRoute.put(
   `${path}/:id`,
-  validate({ params: checkIdSchema, body: cartItemSchema }),
+  validate({
+    params: checkIdSchema,
+    body: z.object({
+      quantity: z
+        .number()
+        .int()
+        .min(1, "Quantity than more 1")
+        .positive("Quantity must be a positive integer"),
+    }),
+  }),
   verifyToken,
   cartItemController.updateCartItem,
 );
@@ -145,7 +147,6 @@ cartItemRoute.delete(
 );
 cartItemRoute.delete(
   `/carts/delete-all`,
-  validate({ params: checkIdSchema }),
   verifyToken,
   cartItemController.clearCart,
 );

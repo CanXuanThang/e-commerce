@@ -29,3 +29,10 @@ export const notHavePermissionResponse = (
     message,
   };
 };
+
+export const conflictResponse = (message = "Conflict !") => {
+  return {
+    success: false,
+    message,
+  };
+};

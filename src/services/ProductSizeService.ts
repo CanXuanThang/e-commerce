@@ -35,8 +35,19 @@ const deleteSize = async (id: number) => {
   return size.destroy();
 };
 
+const checkQuantityById = async (id: number, quantity: number) => {
+  const size = await ProductSize.findByPk(id);
+
+  if (!size) {
+    throw new ApiError(404, "Not found !");
+  }
+
+  return size.quantity > quantity;
+};
+
 export const productSizeService = {
   createProductSize,
   updateProductSize,
   deleteSize,
+  checkQuantityById,
 };
