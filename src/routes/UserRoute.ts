@@ -10,7 +10,7 @@ import { checkIdSchema } from "../schema/common";
 import z from "zod";
 import { checkRole, verifyToken } from "../middlewares/auth";
 
-const route = Router();
+const userRoute = Router();
 const path = "/users";
 /**
  * @swagger
@@ -22,10 +22,10 @@ const path = "/users";
  *       200:
  *         description: Thành công
  */
-route.get(
+userRoute.get(
   path,
-  // verifyToken,
-  // checkRole("admin"),
+  verifyToken,
+  checkRole("admin"),
   userController.getAllUsers,
 );
 
@@ -45,7 +45,7 @@ route.get(
  *       200:
  *         description: Thành công
  */
-route.get(
+userRoute.get(
   `${path}/:id`,
   validate({
     params: checkIdSchema,
@@ -78,11 +78,11 @@ route.get(
  *       201:
  *         description: Tạo thành công
  */
-route.post(
+userRoute.post(
   path,
-  // validate({ body: createUserSchema }),
-  // verifyToken,
-  // checkRole("admin"),
+  validate({ body: createUserSchema }),
+  verifyToken,
+  checkRole("admin"),
   userController.createUser,
 );
 
@@ -120,7 +120,7 @@ route.post(
  *       201:
  *         description: Tạo thành công
  */
-route.put(
+userRoute.put(
   `${path}/:id`,
   validate({
     body: createUserSchema,
@@ -150,7 +150,7 @@ route.put(
  *       201:
  *         description: Tạo thành công
  */
-route.get(
+userRoute.get(
   `${path}/email`,
   validate({
     query: checkUserEmailSchema,
@@ -176,7 +176,7 @@ route.get(
  *       200:
  *         description: Thành công
  */
-route.delete(
+userRoute.delete(
   `${path}/:id`,
   validate({
     params: checkIdSchema,
@@ -212,7 +212,7 @@ route.delete(
  *       200:
  *         description: Thành công
  */
-route.post(
+userRoute.post(
   `/auth/login`,
   validate({ body: checkRequestLoginSchema }),
   userController.login,
@@ -240,7 +240,7 @@ route.post(
  *       200:
  *         description: Thành công
  */
-route.post(
+userRoute.post(
   `/auth/refresh-token`,
   validate({
     body: z.object({
@@ -250,4 +250,4 @@ route.post(
   userController.refreshToken,
 );
 
-export const userRoute = route;
+export default userRoute;

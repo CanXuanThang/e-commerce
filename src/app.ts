@@ -3,7 +3,6 @@ import "dotenv/config";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import { dbConnection } from "./database";
-import { userRoute } from "./routes/UserRoute";
 import "./models";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
@@ -16,6 +15,8 @@ import cors from "cors";
 import bannerRoute from "./routes/BannerRoute";
 import "./types/express";
 import reviewRoute from "./routes/ReviewRoute";
+import { orderRoute } from "./routes/OrderRoute";
+import userRoute from "./routes/UserRoute";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use(apiUrl, cartItemRoute);
 app.use(apiUrl, bannerRoute);
 app.use(apiUrl, reviewRoute);
 app.use(apiUrl, userRoute);
+app.use(apiUrl, orderRoute);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(errorMiddleware);
 

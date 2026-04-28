@@ -11,6 +11,7 @@ export interface UserAttributes {
   role?: "user" | "admin";
   createdAt?: Date;
   updatedAt?: Date;
+  isActive: boolean;
 }
 
 export interface UserCreationAttributes extends Optional<
@@ -28,6 +29,7 @@ export class Users
   public password!: string;
   public phone?: string;
   public role?: "user" | "admin";
+  public isActive!: boolean;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -68,12 +70,17 @@ Users.init(
       type: DataTypes.ENUM("user", "admin"),
       defaultValue: "user",
     },
+
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
     modelName: "Users",
     tableName: "Users",
-    timestamps: false,
+    timestamps: true,
   },
 );
 

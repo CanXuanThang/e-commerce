@@ -6,6 +6,8 @@ import sequelize from "../database/database";
 import { ProductVariant } from "../models/ProductVariant";
 import { ProductSize } from "../models/ProductSize";
 import { CreateSize } from "./ProductSizeService";
+import { Sequelize } from "sequelize";
+import { Reviews } from "../models/Reviews";
 
 export interface ImageInput {
   imageUrl: string;
@@ -34,7 +36,7 @@ export interface CreateProductInput {
 const getAllProducts = async () => {
   try {
     return Products.findAll({
-      attributes: ["id", "name", "discount"],
+      attributes: ["id", "name", "discount", "description"],
       include: [
         {
           model: Categories,
@@ -112,7 +114,7 @@ const createProductDetails = async (
 
 const getProductById = async (id: number) => {
   const product = await Products.findByPk(id, {
-    attributes: ["id", "name", "price", "discount", "description"],
+    attributes: ["id", "name", "discount", "description"],
     include: [
       {
         model: Categories,
@@ -208,6 +210,81 @@ const getProductsByCategoryId = async (categoryId: number) => {
   return { category, products };
 };
 
+const getProductByBestReview = async () => {
+  let products = await Products.findAll({
+    attributes: [
+      "id",
+      "name",
+      "discount",
+      "description",
+
+      [
+        Sequelize.literal(`(
+          SELECT AVG(r.rating)
+          FROM Reviews r
+          WHERE r.productId = Products.id
+        )`),
+        "avgRating",
+      ],
+
+      [
+        Sequelize.literal(`(
+          SELECT COUNT(r.id)
+          FROM Reviews r
+          WHERE r.productId = Products.id
+        )`),
+        "reviewCount",
+      ],
+    ],
+
+    include: [
+      {
+        model: Categories,
+        as: "category",
+        attributes: ["id", "name"],
+      },
+
+      {
+        model: ProductVariant,
+        as: "variants",
+        attributes: ["id", "colorName", "colorCode", "sku", "isDefault"],
+
+        include: [
+          {
+            model: ProductSize,
+            as: "sizes",
+            attributes: ["id", "size", "quantity", "price"],
+          },
+
+          {
+            model: ProductImage,
+            as: "images",
+            attributes: ["id", "imageUrl", "isPrimary", "sortOrder"],
+          },
+        ],
+      },
+    ],
+
+    order: [[Sequelize.literal("avgRating"), "DESC"]],
+
+    limit: 10,
+  });
+
+  const hasRatedProducts = products.some(
+    (product: any) => product.get("avgRating") !== null,
+  );
+
+  if (!products.length || !hasRatedProducts) {
+    return await Products.findAll({
+      attributes: ["id", "name", "discount", "description"],
+      order: [["id", "ASC"]],
+      limit: 10,
+    });
+  }
+
+  return products;
+};
+
 export const productService = {
   getAllProducts,
   createProduct,
@@ -216,4 +293,5 @@ export const productService = {
   deleteProduct,
   getProductsByCategoryId,
   createProductDetails,
+  getProductByBestReview,
 };

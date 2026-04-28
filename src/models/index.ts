@@ -97,9 +97,9 @@ OrderItem.belongsTo(Orders, {
   as: "order",
 });
 
-OrderItem.belongsTo(Products, {
-  foreignKey: "productId",
-  as: "product",
+OrderItem.belongsTo(ProductSize, {
+  foreignKey: "productSizeId",
+  as: "productSize",
 });
 
 OrderItem.belongsTo(ProductVariant, {
@@ -134,11 +134,6 @@ Products.hasMany(ProductVariant, {
 Products.hasMany(CartItem, {
   foreignKey: "productId",
   as: "cartItems",
-});
-
-Products.hasMany(OrderItem, {
-  foreignKey: "productId",
-  as: "orderItems",
 });
 
 Products.hasMany(Reviews, {
@@ -176,6 +171,11 @@ ProductImage.belongsTo(ProductVariant, {
 ProductSize.belongsTo(ProductVariant, {
   foreignKey: "variantId",
   as: "variant",
+});
+
+ProductSize.hasMany(OrderItem, {
+  foreignKey: "productSizeId",
+  as: "orderItems",
 });
 
 // ==================== Reviews ====================

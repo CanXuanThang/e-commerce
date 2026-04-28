@@ -10,6 +10,7 @@ export interface ICreateUser {
   password: string;
   phone?: string;
   role?: "user" | "admin";
+  isActive?: boolean;
 }
 
 export interface IUpdateUser {
@@ -26,16 +27,35 @@ export interface IAuthRequest {
 }
 
 const getAllUsers = async () => {
-  return Users.findAll();
+  const users = await Users.findAll({
+    attributes: {
+      exclude: ["password"],
+    },
+  });
+  return users;
 };
 
 const getUserById = async (id: number) => {
-  return Users.findByPk(id);
+  return Users.findByPk(id, {
+    attributes: [
+      "id",
+      "email",
+      "name",
+      "phone",
+      "role",
+      "isActive",
+      "createdAt",
+    ],
+  });
 };
 
 const createUser = async (user: ICreateUser) => {
   const hashPassword = await bcrypt.hash(user.password, 10);
-  return Users.create({ ...user, password: hashPassword });
+  return Users.create({
+    ...user,
+    password: hashPassword,
+    isActive: user.isActive ?? true,
+  });
 };
 
 const updateUser = async (id: number, user: Partial<IUpdateUser>) => {
@@ -61,17 +81,22 @@ const getUserByEmail = async (email: string) => {
 const login = async (payload: IAuthRequest) => {
   const user = await getUserByEmail(payload.email);
   if (!user) {
-    throw new ApiError(404, "Invalid email or password");
+    throw new ApiError(200, "Invalid email or password");
   }
   const isPasswordValid = await bcrypt.compare(payload.password, user.password);
   if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid email or password");
+    throw new ApiError(200, "Invalid email or password");
   }
   const { id, role } = user;
 
   return {
     accessToken: generateAccessToken({ id, role }),
     refreshToken: generateRefreshToken({ id, role }),
+    user: {
+      email: user.email,
+      name: user.name,
+      phone: user.phone,
+    },
   };
 };
 

@@ -4,9 +4,10 @@ import sequelize from "../database/database";
 export interface OrderItemAttributes {
   id: number;
   orderId: number;
-  productId: number;
+  productSizeId: number;
   quantity: number;
   price: number;
+  productVariantId: number;
 }
 
 export interface OrderItemCreationAttributes extends Optional<
@@ -20,9 +21,10 @@ export class OrderItem
 {
   public id!: number;
   public orderId!: number;
-  public productId!: number;
+  public productSizeId!: number;
   public quantity!: number;
   public price!: number;
+  public productVariantId!: number;
 }
 
 OrderItem.init(
@@ -37,11 +39,21 @@ OrderItem.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    productId: {
+    productSizeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Products",
+        model: "ProductSize",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    },
+    productVariantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "ProductVariant",
         key: "id",
       },
       onDelete: "CASCADE",

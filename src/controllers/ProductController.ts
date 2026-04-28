@@ -174,6 +174,22 @@ const getProductsByCategoryId = async (
   }
 };
 
+const getProductByBestReview = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await productService.getProductByBestReview();
+
+    console.log(result);
+
+    return response.ok(res, result, "Success !");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const productController = {
   getAllProducts,
   createProduct,
@@ -182,4 +198,5 @@ export const productController = {
   deleteProduct,
   getProductsByCategoryId,
   createProductDetails,
+  getProductByBestReview,
 };

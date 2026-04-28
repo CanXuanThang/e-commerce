@@ -1,5 +1,9 @@
 import { CartItem } from "../models/CartItem";
 import { Carts } from "../models/Carts";
+import { ProductImage } from "../models/ProductImage";
+import { Products } from "../models/Products";
+import { ProductSize } from "../models/ProductSize";
+import { ProductVariant } from "../models/ProductVariant";
 import { ApiError } from "../utils/apiError";
 
 const addProductToCart = async (
@@ -50,7 +54,55 @@ const clearCart = async (cartId: number) => {
 };
 
 const getCartItemsByCartId = async (cartId: number) => {
-  return CartItem.findAll({ where: { cartId } });
+  const items = await CartItem.findAll({
+    where: { cartId },
+    attributes: ["id", "quantity", "price"],
+    include: [
+      {
+        model: Products,
+        as: "product",
+        attributes: ["id", "name", "description"],
+      },
+      {
+        model: ProductSize,
+        as: "size",
+        attributes: ["size"],
+      },
+      {
+        model: ProductVariant,
+        as: "variant",
+        attributes: ["id", "colorName", "colorCode"],
+        include: [
+          {
+            model: ProductImage,
+            as: "images",
+            attributes: ["imageUrl"],
+            where: { isPrimary: true },
+            limit: 1,
+            separate: true,
+          },
+        ],
+      },
+    ],
+  });
+
+  return items.map((item: any) => {
+    const { images, ...rest } = item.variant?.toJSON();
+    return {
+      id: item.id,
+      quantity: item.quantity,
+      price: item.price,
+
+      product: item.product,
+
+      variant: {
+        ...rest,
+        imgUrl: images?.[0]?.imageUrl || null,
+      },
+
+      size: item.size?.size,
+    };
+  });
 };
 
 const getCartByUserId = async (userId: number) => {

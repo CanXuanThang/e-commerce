@@ -35,7 +35,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const existingUser = await userService.getUserByEmail(req.body.email);
 
     if (existingUser) {
-      return response.badRequest(res, null, "Email already exists");
+      return response.ok(res, null, "Email already exists");
     }
     const user = await userService.createUser(req.body);
     return response.ok(res, user, "User created successfully");
@@ -93,15 +93,11 @@ const getUserByEmail = async (
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    const { accessToken, refreshToken } = await userService.login({
+    const user = await userService.login({
       email,
       password,
     });
-    return response.ok(
-      res,
-      { accessToken, refreshToken },
-      "Login successfully",
-    );
+    return response.ok(res, user, "Login successfully");
   } catch (error) {
     next(error);
   }
