@@ -41,6 +41,7 @@ route.get(path, verifyToken, orderController.getOrdersByUserId);
  *           example:
  *             address: "123 Hoan Kiem, Ha Noi"
  *             phone: "0987654321"
+ *             note: "Giao hàng giờ hành chính"
  *             orderItems:
  *               - productVariantId: 2
  *                 productSizeId: 10
@@ -108,7 +109,7 @@ route.get(
  *       200:
  *         description: Thành công
  */
-route.get(
+route.delete(
   `${path}/:id`,
   validate({
     params: checkIdSchema,
@@ -144,7 +145,7 @@ route.get(
  *       200:
  *         description: Thành công
  */
-route.get(
+route.put(
   `${path}/:id`,
   validate({
     params: checkIdSchema,
@@ -152,7 +153,7 @@ route.get(
   }),
   verifyToken,
   checkRole("admin"),
-  orderController.deleteOrder,
+  orderController.updateStatusOrder,
 );
 
 export const orderRoute = route;

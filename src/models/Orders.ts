@@ -9,6 +9,7 @@ export interface OrderAttributes {
   address: string;
   phone: string;
   createdAt: Date;
+  note?: string;
 }
 
 export interface OrderCreationAttributes extends Optional<
@@ -27,6 +28,7 @@ export class Orders
   public address!: string;
   public phone!: string;
   public createdAt!: Date;
+  public note!: string;
 }
 
 Orders.init(
@@ -60,6 +62,10 @@ Orders.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+    },
+    note: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

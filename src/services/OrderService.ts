@@ -13,6 +13,7 @@ export interface CreateOrderPayload {
   address: string;
   phone: string;
   orderItems: CreateOrderItemPayload[];
+  note?: string;
 }
 
 interface CreateOrderItemPayload {
@@ -65,6 +66,7 @@ const createOrder = async (payload: CreateOrderPayload) => {
         address: payload.address,
         phone: payload.phone,
         totalAmount: 0,
+        note: payload.note,
       },
       { transaction },
     );
@@ -104,7 +106,7 @@ const createOrder = async (payload: CreateOrderPayload) => {
       await CartItem.destroy({
         where: {
           sizeId: item.productSizeId,
-          id: payload.userId,
+          cartId: payload.userId,
           variantId: item.productVariantId,
         },
         transaction,
@@ -156,7 +158,13 @@ const updateStattusOrder = async (
     throw new ApiError(404, " Order not found !");
   }
 
-  return order.update({ ...order, status });
+  const validStatus = ["pending", "completed", "cancelled", "shipping"];
+
+  if (!validStatus.includes(status)) {
+    throw new ApiError(400, "Invalid status");
+  }
+
+  return order.update({ status });
 };
 
 export const orderService = {
