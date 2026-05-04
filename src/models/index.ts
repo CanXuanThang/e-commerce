@@ -97,19 +97,14 @@ OrderItem.belongsTo(Orders, {
   as: "order",
 });
 
+OrderItem.belongsTo(ProductVariant, {
+  foreignKey: "productVariantId",
+  as: "variants",
+});
+
 OrderItem.belongsTo(ProductSize, {
   foreignKey: "productSizeId",
-  as: "productSize",
-});
-
-OrderItem.belongsTo(ProductVariant, {
-  foreignKey: "variantId",
-  as: "variant",
-});
-
-OrderItem.belongsTo(ProductSize, {
-  foreignKey: "sizeId",
-  as: "size",
+  as: "sizes",
 });
 
 // ==================== Payments ====================

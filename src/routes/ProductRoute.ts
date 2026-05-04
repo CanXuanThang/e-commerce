@@ -8,6 +8,7 @@ import {
 import { checkIdSchema } from "../schema/common";
 import { checkRole, verifyToken } from "../middlewares/auth";
 import { upload } from "../middlewares/uploadImage";
+import z from "zod";
 
 const productRoute = Router();
 const path = "/products";
@@ -138,7 +139,31 @@ productRoute.get(
  *         required: true
  *         schema:
  *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - categoryId
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Áo thun nam
  *
+ *               description:
+ *                 type: string
+ *                 example: Áo thun cotton 100%
+ *
+ *               discount:
+ *                 type: number
+ *                 example: 10
+ *
+ *               categoryId:
+ *                 type: integer
+ *                 example: 1
  *     responses:
  *       200:
  *         description: Product updated successfully
@@ -183,7 +208,14 @@ productRoute.put(
  */
 productRoute.get(
   `${path}/category/:categoryId`,
-  validate({ params: checkIdSchema }),
+  validate({
+    params: z.object({
+      categoryId: z.coerce
+        .number()
+        .int()
+        .positive("ID must be a positive integer"),
+    }),
+  }),
   productController.getProductsByCategoryId,
 );
 
@@ -305,7 +337,12 @@ productRoute.post(
   checkRole("admin"),
   upload.array("images", 15),
   validate({
-    params: checkIdSchema,
+    params: z.object({
+      productId: z.coerce
+        .number()
+        .int()
+        .positive("ID must be a positive integer"),
+    }),
     body: createProductDetailsBodySchema,
   }),
   productController.createProductDetails,

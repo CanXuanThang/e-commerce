@@ -37,15 +37,9 @@ const getAllUsers = async () => {
 
 const getUserById = async (id: number) => {
   return Users.findByPk(id, {
-    attributes: [
-      "id",
-      "email",
-      "name",
-      "phone",
-      "role",
-      "isActive",
-      "createdAt",
-    ],
+    attributes: {
+      exclude: ["password"],
+    },
   });
 };
 

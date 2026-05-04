@@ -61,12 +61,12 @@ const getCartItemsByCartId = async (cartId: number) => {
       {
         model: Products,
         as: "product",
-        attributes: ["id", "name", "description"],
+        attributes: ["id", "name", "description", "discount"],
       },
       {
         model: ProductSize,
         as: "size",
-        attributes: ["size"],
+        attributes: ["id", "size"],
       },
       {
         model: ProductVariant,
@@ -99,7 +99,7 @@ const getCartItemsByCartId = async (cartId: number) => {
         ...rest,
         imgUrl: images?.[0]?.imageUrl || null,
       },
-
+      sizeId: item.size?.id,
       size: item.size?.size,
     };
   });

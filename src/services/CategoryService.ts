@@ -2,11 +2,21 @@ import { Categories } from "../models/Categories";
 import { ApiError } from "../utils/apiError";
 
 const getAll = async () => {
-  return Categories.findAll();
+  return Categories.findAll({
+    attributes: ["id", "name"],
+    include: [
+      { model: Categories, as: "children", attributes: ["id", "name"] },
+    ],
+  });
 };
 
 const findById = async (id: number) => {
-  return Categories.findByPk(id);
+  return Categories.findByPk(id, {
+    attributes: ["id", "name"],
+    include: [
+      { model: Categories, as: "children", attributes: ["id", "name"] },
+    ],
+  });
 };
 
 const getCategoryByName = async (name: string) => {

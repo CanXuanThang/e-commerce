@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { orderController } from "../controllers/OrderController";
-import { verifyToken } from "../middlewares/auth";
+import { checkRole, verifyToken } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
 import { createOrderSchema } from "../schema/order";
 
@@ -44,9 +44,11 @@ route.get(path, verifyToken, orderController.getOrdersByUserId);
  *               - productVariantId: 2
  *                 productSizeId: 10
  *                 quantity: 2
+ *                 price: 2000000
  *               - productVariantId: 3
  *                 productSizeId: 15
  *                 quantity: 1
+ *                 price: 2000000
  *     responses:
  *       201:
  *         description: Order created successfully
@@ -66,6 +68,27 @@ route.post(
   verifyToken,
   validate({ body: createOrderSchema }),
   orderController.createOrder,
+);
+
+/**
+ * @swagger
+ * /orders/all:
+ *   get:
+ *     summary: Get all orders
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all orders
+ *       401:
+ *         description: Unauthorized
+ */
+route.get(
+  `${path}/all`,
+  verifyToken,
+  checkRole("admin"),
+  orderController.getAllOrders,
 );
 
 export const orderRoute = route;

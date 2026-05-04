@@ -31,9 +31,7 @@ const createCategory = async (
 
     const id = parseInt(req.body.parentId);
     if (id) {
-      const parentCategory = await categoryService.getCategoryByName(
-        req.body.parentId,
-      );
+      const parentCategory = await categoryService.findById(req.body.parentId);
       if (!parentCategory) {
         return response.notFound(res, null, "Parent category not found");
       }

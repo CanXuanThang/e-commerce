@@ -5,6 +5,7 @@ import { Orders } from "../models/Orders";
 import { ProductImage } from "../models/ProductImage";
 import { ProductSize } from "../models/ProductSize";
 import { ProductVariant } from "../models/ProductVariant";
+import { Users } from "../models/Users";
 import { ApiError } from "../utils/apiError";
 
 export interface CreateOrderPayload {
@@ -27,7 +28,7 @@ const getOrdersByUserId = async (userId: number) => {
     include: [
       {
         model: OrderItem,
-        as: "orderItems",
+        as: "items",
         include: [
           {
             model: ProductVariant,
@@ -121,7 +122,23 @@ const createOrder = async (payload: CreateOrderPayload) => {
   });
 };
 
+const getAllOrders = async () => {
+  return Orders.findAll({
+    attributes: {
+      exclude: ["userId"],
+    },
+    include: [
+      {
+        model: Users,
+        as: "user",
+        attributes: ["id", "name", "email"],
+      },
+    ],
+  });
+};
+
 export const orderService = {
   getOrdersByUserId,
   createOrder,
+  getAllOrders,
 };
