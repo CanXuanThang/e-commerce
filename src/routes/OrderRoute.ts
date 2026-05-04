@@ -2,7 +2,8 @@ import { Router } from "express";
 import { orderController } from "../controllers/OrderController";
 import { checkRole, verifyToken } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
-import { createOrderSchema } from "../schema/order";
+import { createOrderSchema, updateStatusOrder } from "../schema/order";
+import { checkIdSchema } from "../schema/common";
 
 const route = Router();
 const path = "/orders";
@@ -89,6 +90,69 @@ route.get(
   verifyToken,
   checkRole("admin"),
   orderController.getAllOrders,
+);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   delete:
+ *     summary: Delete order by id
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+route.get(
+  `${path}/:id`,
+  validate({
+    params: checkIdSchema,
+  }),
+  verifyToken,
+  checkRole("admin"),
+  orderController.deleteOrder,
+);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   put:
+ *     summary: Update order by id
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, completed, cancelled, shipping]
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+route.get(
+  `${path}/:id`,
+  validate({
+    params: checkIdSchema,
+    body: updateStatusOrder,
+  }),
+  verifyToken,
+  checkRole("admin"),
+  orderController.deleteOrder,
 );
 
 export const orderRoute = route;

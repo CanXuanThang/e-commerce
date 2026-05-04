@@ -14,3 +14,7 @@ export const createOrderSchema = z.object({
     .array(orderItemSchema)
     .min(1, "Order must have at least one item"),
 });
+
+export const updateStatusOrder = z.object({
+  status: z.enum(["pending", "completed", "cancelled", "shipping"]).optional(),
+});

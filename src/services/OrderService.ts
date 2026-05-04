@@ -131,14 +131,38 @@ const getAllOrders = async () => {
       {
         model: Users,
         as: "user",
-        attributes: ["id", "name", "email"],
+        attributes: ["name", "email", "phone"],
       },
     ],
   });
+};
+
+const deleteOrder = async (id: number) => {
+  const order = await Orders.findByPk(id);
+  if (!order) {
+    throw new ApiError(404, "Order not found !");
+  }
+
+  return order.destroy();
+};
+
+const updateStattusOrder = async (
+  id: number,
+  status: "pending" | "completed" | "cancelled" | "shipping",
+) => {
+  const order = await Orders.findByPk(id);
+
+  if (!order) {
+    throw new ApiError(404, " Order not found !");
+  }
+
+  return order.update({ ...order, status });
 };
 
 export const orderService = {
   getOrdersByUserId,
   createOrder,
   getAllOrders,
+  deleteOrder,
+  updateStattusOrder,
 };
