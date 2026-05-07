@@ -65,8 +65,31 @@ const updateCategory = async (
   }
 };
 
+const getCategoryById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const id = parseInt(req.params.id as string);
+    if (id) {
+      const parentCategory = await categoryService.findById(id);
+      if (!parentCategory) {
+        return response.notFound(res, null, "Parent category not found");
+      }
+
+      return response.ok(res, parentCategory, "Success !");
+    }
+
+    return response.notFound(res, null, "CategoryId is required!");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const categoryController = {
   getAllCategories,
   createCategory,
   updateCategory,
+  getCategoryById,
 };

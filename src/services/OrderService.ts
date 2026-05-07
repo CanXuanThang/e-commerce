@@ -1,3 +1,4 @@
+import { getIO } from "../config/socket";
 import sequelize from "../database/database";
 import { CartItem } from "../models/CartItem";
 import { OrderItem } from "../models/OrderItem";
@@ -7,6 +8,7 @@ import { ProductSize } from "../models/ProductSize";
 import { ProductVariant } from "../models/ProductVariant";
 import { Users } from "../models/Users";
 import { ApiError } from "../utils/apiError";
+import { notificationCount } from "./NotificationCount";
 
 export interface CreateOrderPayload {
   userId: number;
@@ -119,6 +121,14 @@ const createOrder = async (payload: CreateOrderPayload) => {
       },
       { transaction },
     );
+
+    const io = getIO();
+    const count = await notificationCount.updateCount();
+
+    io.to("admin_room").emit("notification_count_updated", {
+      message: "Có đơn hàng mới",
+      count: count,
+    });
 
     return order;
   });

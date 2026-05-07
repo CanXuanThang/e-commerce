@@ -3,9 +3,16 @@ import { ApiError } from "../utils/apiError";
 
 const getAll = async () => {
   return Categories.findAll({
+    where: {
+      parentId: null,
+    },
     attributes: ["id", "name"],
     include: [
-      { model: Categories, as: "children", attributes: ["id", "name"] },
+      {
+        model: Categories,
+        as: "children",
+        attributes: ["id", "name"],
+      },
     ],
   });
 };

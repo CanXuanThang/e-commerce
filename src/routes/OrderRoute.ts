@@ -4,6 +4,7 @@ import { checkRole, verifyToken } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
 import { createOrderSchema, updateStatusOrder } from "../schema/order";
 import { checkIdSchema } from "../schema/common";
+import { notiController } from "../controllers/NotificationCountController";
 
 const route = Router();
 const path = "/orders";
@@ -154,6 +155,20 @@ route.put(
   verifyToken,
   checkRole("admin"),
   orderController.updateStatusOrder,
+);
+
+route.get(
+  `${path}/reset-noti`,
+  verifyToken,
+  checkRole("admin"),
+  notiController.resetCount,
+);
+
+route.get(
+  `${path}/get-noti`,
+  verifyToken,
+  checkRole("admin"),
+  notiController.getCount,
 );
 
 export const orderRoute = route;

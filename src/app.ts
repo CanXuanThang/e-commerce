@@ -17,6 +17,8 @@ import "./types/express";
 import reviewRoute from "./routes/ReviewRoute";
 import { orderRoute } from "./routes/OrderRoute";
 import userRoute from "./routes/UserRoute";
+import http from "http";
+import { initSocket } from "./config/socket";
 
 const app = express();
 
@@ -40,10 +42,14 @@ app.use(apiUrl, orderRoute);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(errorMiddleware);
 
+const server = http.createServer(app);
+
+initSocket(server);
+
 const startServer = async () => {
   await dbConnection();
 
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
 };

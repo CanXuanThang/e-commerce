@@ -86,4 +86,26 @@ route.put(
   categoryController.updateCategory,
 );
 
+/**
+ * @swagger
+ * /categories/{id}:
+ *   get:
+ *     summary: Cập nhật category theo id
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ */
+route.get(
+  `${path}/:id`,
+  validate({ params: checkIdSchema }),
+  categoryController.getCategoryById,
+);
+
 export const categoryRoute = route;
