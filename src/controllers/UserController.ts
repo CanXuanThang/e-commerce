@@ -22,7 +22,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id as string);
     const user = await userService.getUserById(id);
     if (!user) {
-      return response.notFound(res, null, "User not found");
+      return response.ok(res, null, "User not found");
     }
     return response.ok(res, user, "User found successfully");
   } catch (error) {
@@ -49,7 +49,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id as string);
     const existingUser = await userService.getUserById(id);
     if (!existingUser) {
-      return response.notFound(res, null, "User not found");
+      return response.ok(res, null, "User not found");
     }
 
     const user = await userService.updateUser(id, req.body);
@@ -64,7 +64,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id as string);
     const existingUser = await userService.getUserById(id);
     if (!existingUser) {
-      return response.notFound(res, null, "User not found");
+      return response.ok(res, null, "User not found");
     }
     await userService.deleteUser(id);
     return response.ok(res, null, "User deleted successfully");
@@ -82,7 +82,7 @@ const getUserByEmail = async (
     const email = req.query.email as string;
     const user = await userService.getUserByEmail(email);
     if (!user) {
-      return response.notFound(res, null, "User not found");
+      return response.ok(res, null, "User not found");
     }
     return response.ok(res, user, "User found successfully");
   } catch (error) {

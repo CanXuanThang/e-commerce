@@ -25,6 +25,8 @@ export const createProductSchema = z.object({
     .number("Category ID must be a number")
     .int()
     .positive("Category ID must be positive"),
+
+  isActive: z.boolean(),
 });
 
 export const imageMetadataSchema = z.object({

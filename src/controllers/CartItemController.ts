@@ -20,7 +20,7 @@ const addProductToCart = async (
         );
 
         if (!checkQuantity) {
-          return response.conflict(res, "Not enough stock available");
+          return response.ok(res, null, "Not enough stock available");
         }
 
         const cartItem = await cartItemService.addProductToCart(
@@ -34,7 +34,7 @@ const addProductToCart = async (
         return response.ok(res, cartItem, "Product added to cart successfully");
       }
     }
-    return response.notFound(res, null, "Not found cart by user !");
+    return response.ok(res, null, "Not found cart by user !");
   } catch (error) {
     next(error);
   }
@@ -86,7 +86,7 @@ const clearCart = async (req: Request, res: Response, next: NextFunction) => {
       await cartItemService.clearCart(cart.id);
       return response.ok(res, null, "Cart cleared successfully");
     }
-    return response.notFound(res, null, "Not found cart by user !");
+    return response.ok(res, null, "Not found cart by user !");
   } catch (error) {
     next(error);
   }
@@ -109,7 +109,7 @@ const getCartItemsByCartId = async (
       return response.ok(res, cartItems, "Get cart items successfully");
     }
 
-    return response.notFound(res, null, "Not found cart by user !");
+    return response.ok(res, null, "Not found cart by user !");
   } catch (error) {
     next(error);
   }

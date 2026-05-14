@@ -55,7 +55,7 @@ const createUser = async (user: ICreateUser) => {
 const updateUser = async (id: number, user: Partial<IUpdateUser>) => {
   const existingUser = await Users.findByPk(id);
   if (!existingUser) {
-    throw new ApiError(404, "User not found");
+    throw new ApiError(200, "User not found");
   }
   return existingUser.update(user);
 };
@@ -63,7 +63,7 @@ const updateUser = async (id: number, user: Partial<IUpdateUser>) => {
 const deleteUser = async (id: number) => {
   const existingUser = await Users.findByPk(id);
   if (!existingUser) {
-    throw new ApiError(404, "User not found");
+    throw new ApiError(200, "User not found");
   }
   return existingUser.destroy();
 };

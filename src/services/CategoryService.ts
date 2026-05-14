@@ -44,7 +44,7 @@ const updateCategory = async (
 ) => {
   const category = await Categories.findByPk(id);
   if (!category) {
-    throw new ApiError(404, "Category not found");
+    throw new ApiError(200, "Category not found");
   }
   if (payload.name) {
     const existingCategory = await getCategoryByName(payload.name);

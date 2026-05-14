@@ -348,4 +348,31 @@ productRoute.post(
   productController.createProductDetails,
 );
 
+/**
+ * @swagger
+ * /products/top-selling/{count}:
+ *   get:
+ *     summary: Lấy các sản phẩm bán chạy nhất
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: count
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Get product list successfully
+ */
+
+productRoute.get(
+  `${path}/top-selling/:count`,
+  validate({
+    params: z.object({
+      count: z.coerce.number().int(),
+    }),
+  }),
+  productController.getTopSellingProducts,
+);
+
 export default productRoute;

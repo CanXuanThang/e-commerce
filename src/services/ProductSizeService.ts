@@ -19,7 +19,7 @@ const updateProductSize = async (id: number, data: SizeInput) => {
   const size = await ProductSize.findByPk(id);
 
   if (!size) {
-    throw new ApiError(404, "Not found !");
+    throw new ApiError(200, "Not found !");
   }
 
   return size.update(data);
@@ -29,7 +29,7 @@ const deleteSize = async (id: number) => {
   const size = await ProductSize.findByPk(id);
 
   if (!size) {
-    throw new ApiError(404, "Not found !");
+    throw new ApiError(200, "Not found !");
   }
 
   return size.destroy();
@@ -39,7 +39,7 @@ const checkQuantityById = async (id: number, quantity: number) => {
   const size = await ProductSize.findByPk(id);
 
   if (!size) {
-    throw new ApiError(404, "Not found !");
+    throw new ApiError(200, "Not found !");
   }
 
   return size.quantity > quantity;

@@ -9,6 +9,7 @@ export interface ProductAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   discount: number;
+  isActive?: boolean;
 }
 
 export interface ProductCreationAttributes extends Optional<
@@ -25,6 +26,7 @@ export class Products
   public description?: string;
   public categoryId!: number;
   public discount!: number;
+  public isActive!: boolean;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -59,6 +61,11 @@ Products.init(
     discount: {
       type: DataTypes.INTEGER,
       allowNull: true,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

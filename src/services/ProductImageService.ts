@@ -13,7 +13,7 @@ const createProductImage = async (variantId: number, imageUrl: string) => {
 const deleteProductImage = async (id: number) => {
   const productImage = await ProductImage.findByPk(id);
   if (!productImage) {
-    throw new ApiError(404, "Product image not found");
+    throw new ApiError(200, "Product image not found");
   }
   const publicId = productImage.imageUrl
     .split("/")

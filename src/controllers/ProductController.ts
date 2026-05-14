@@ -7,12 +7,15 @@ import {
 } from "../services/ProductService";
 
 const getAllProducts = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const products = await productService.getAllProducts();
+    const role = req?.user?.role;
+    const products = await productService.getAllProducts(
+      role && role.length > 0 ? role === "admin" : false,
+    );
 
     return response.ok(res, products, "Get all products successfully");
   } catch (error) {
@@ -140,12 +143,6 @@ const deleteProduct = async (
       return response.badRequest(res, null, "Invalid product id");
     }
 
-    const product = await productService.getProductById(id);
-
-    if (!product) {
-      return response.notFound(res, null, "Product not found");
-    }
-
     await productService.deleteProduct(id);
 
     return response.ok(res, null, "Product deleted successfully");
@@ -161,12 +158,16 @@ const getProductsByCategoryId = async (
 ) => {
   try {
     const categoryId = Number(req.params.categoryId);
+    const role = req?.user?.role;
 
     if (!categoryId) {
       return response.badRequest(res, null, "Invalid category id");
     }
 
-    const result = await productService.getProductsByCategoryId(categoryId);
+    const result = await productService.getProductsByCategoryId(
+      categoryId,
+      role && role.length > 0 ? role === "admin" : false,
+    );
 
     return response.ok(res, result, "Get products by category id successfully");
   } catch (error) {
@@ -175,14 +176,30 @@ const getProductsByCategoryId = async (
 };
 
 const getProductByBestReview = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const result = await productService.getProductByBestReview();
+    const role = req?.user?.role;
+    const result = await productService.getProductByBestReview(
+      role && role.length > 0 ? role === "admin" : false,
+    );
 
-    console.log(result);
+    return response.ok(res, result, "Success !");
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getTopSellingProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const count = Number(req.params?.count);
+    const result = await productService.getTopSellingProducts(count ?? 5);
 
     return response.ok(res, result, "Success !");
   } catch (error) {
@@ -199,4 +216,5 @@ export const productController = {
   getProductsByCategoryId,
   createProductDetails,
   getProductByBestReview,
+  getTopSellingProducts,
 };

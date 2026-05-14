@@ -14,7 +14,7 @@ const getAllBanners = async () => {
 const updateBanner = async (id: number, banner: IBanner) => {
   const existingBanner = await Banners.findByPk(id);
   if (!existingBanner) {
-    throw new ApiError(404, "Banner not found");
+    throw new ApiError(200, "Banner not found");
   }
 
   return existingBanner.update(banner);
@@ -23,7 +23,7 @@ const updateBanner = async (id: number, banner: IBanner) => {
 const deleteBanner = async (id: number) => {
   const existingBanner = await Banners.findByPk(id);
   if (!existingBanner) {
-    throw new ApiError(404, "Banner not found");
+    throw new ApiError(200, "Banner not found");
   }
   const publicId = existingBanner.imageUrl
     .split("/")

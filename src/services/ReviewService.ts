@@ -11,7 +11,7 @@ const createReview = async (
 ) => {
   const product = await Products.findByPk(productId);
   if (!product) {
-    throw new ApiError(404, "Product not found !");
+    throw new ApiError(200, "Product not found !");
   }
 
   return Reviews.create({ userId, productId, rating, comment });

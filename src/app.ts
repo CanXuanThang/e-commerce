@@ -8,7 +8,7 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
 import { categoryRoute } from "./routes/CategoryRoute";
 import productRoute from "./routes/ProductRoute";
-import productImageRoute from "./routes/ProductImage";
+import productImageRoute from "./routes/ProductImageRoute";
 import cartItemRoute from "./routes/CartItemRoute";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import cors from "cors";

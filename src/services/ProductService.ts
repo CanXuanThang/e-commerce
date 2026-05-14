@@ -6,8 +6,9 @@ import sequelize from "../database/database";
 import { ProductVariant } from "../models/ProductVariant";
 import { ProductSize } from "../models/ProductSize";
 import { CreateSize } from "./ProductSizeService";
-import { Sequelize } from "sequelize";
+import { cast, col, fn, literal, Sequelize } from "sequelize";
 import { Reviews } from "../models/Reviews";
+import { OrderItem } from "../models/OrderItem";
 
 export interface ImageInput {
   imageUrl: string;
@@ -29,13 +30,16 @@ export interface CreateProductInput {
   description?: string;
   categoryId: number;
   discount: number;
+  isActive?: boolean;
 }
 
 // ================= GET ALL PRODUCTS =================
 
-const getAllProducts = async () => {
+const getAllProducts = async (isAdmin?: boolean) => {
   try {
+    const whereCondition = isAdmin ? {} : { isActive: true };
     return Products.findAll({
+      where: whereCondition,
       attributes: ["id", "name", "discount", "description"],
       include: [
         {
@@ -142,7 +146,7 @@ const getProductById = async (id: number) => {
   });
 
   if (!product) {
-    throw new ApiError(404, "Product not found");
+    throw new ApiError(200, "Product not found");
   }
 
   return product;
@@ -157,7 +161,7 @@ const updateProduct = async (
   const product = await Products.findByPk(id);
 
   if (!product) {
-    throw new ApiError(404, "Product not found");
+    throw new ApiError(200, "Product not found");
   }
 
   return product.update(payload);
@@ -169,7 +173,7 @@ const deleteProduct = async (id: number) => {
   const product = await Products.findByPk(id);
 
   if (!product) {
-    throw new ApiError(404, "Product not found");
+    throw new ApiError(200, "Product not found");
   }
 
   return product.destroy();
@@ -177,15 +181,21 @@ const deleteProduct = async (id: number) => {
 
 // ================= GET PRODUCTS BY CATEGORY =================
 
-const getProductsByCategoryId = async (categoryId: number) => {
+const getProductsByCategoryId = async (
+  categoryId: number,
+  isAdmin?: boolean,
+) => {
+  const whereCondition = isAdmin
+    ? { categoryId: categoryId }
+    : { categoryId: categoryId, isActive: true };
   const category = await Categories.findByPk(categoryId);
 
   if (!category) {
-    throw new ApiError(404, "Category not found");
+    throw new ApiError(200, "Category not found");
   }
 
   const products = await Products.findAll({
-    where: { categoryId },
+    where: whereCondition,
     include: [
       {
         model: ProductVariant,
@@ -210,8 +220,11 @@ const getProductsByCategoryId = async (categoryId: number) => {
   return { category, products };
 };
 
-const getProductByBestReview = async () => {
+const getProductByBestReview = async (isAdmin?: boolean) => {
+  const whereCondition = isAdmin ? {} : { isActive: true };
+
   let products = await Products.findAll({
+    where: whereCondition,
     attributes: [
       "id",
       "name",
@@ -271,7 +284,7 @@ const getProductByBestReview = async () => {
   });
 
   const hasRatedProducts = products.some(
-    (product: any) => product.get("avgRating") !== null,
+    (product) => product.get("avgRating") !== null,
   );
 
   if (!products.length || !hasRatedProducts) {
@@ -285,6 +298,36 @@ const getProductByBestReview = async () => {
   return products;
 };
 
+const getTopSellingProducts = async (count: number) => {
+  return OrderItem.findAll({
+    attributes: [
+      "productVariantId",
+      [cast(fn("SUM", col("quantity")), "SIGNED"), "totalSold"],
+      [cast(fn("SUM", col("price")), "SIGNED"), "totalAmount"],
+      [col("variants.product.name"), "name"],
+    ],
+
+    include: [
+      {
+        model: ProductVariant,
+        as: "variants",
+        attributes: [],
+        include: [
+          {
+            model: Products,
+            as: "product",
+            attributes: [],
+          },
+        ],
+      },
+    ],
+
+    group: ["productVariantId", "variants->product.id"],
+    order: [[literal("totalSold"), "DESC"]],
+    limit: count,
+  });
+};
+
 export const productService = {
   getAllProducts,
   createProduct,
@@ -294,4 +337,5 @@ export const productService = {
   getProductsByCategoryId,
   createProductDetails,
   getProductByBestReview,
+  getTopSellingProducts,
 };

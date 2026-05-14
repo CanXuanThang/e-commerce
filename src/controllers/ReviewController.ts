@@ -10,7 +10,6 @@ const createReview = async (
   try {
     const productId = Number(req.params.productId);
     const { rating, comment } = req.body;
-    console.log(productId);
 
     const userId = req.user?.id;
     if (userId) {

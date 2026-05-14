@@ -26,14 +26,14 @@ const createCategory = async (
       req.body.name,
     );
     if (existingCategory) {
-      return response.badRequest(res, null, "Category name already exists");
+      return response.ok(res, null, "Category name already exists");
     }
 
     const id = parseInt(req.body.parentId);
     if (id) {
       const parentCategory = await categoryService.findById(req.body.parentId);
       if (!parentCategory) {
-        return response.notFound(res, null, "Parent category not found");
+        return response.ok(res, null, "Parent category not found");
       }
     }
 
@@ -55,7 +55,7 @@ const updateCategory = async (
       req.body.name,
     );
     if (existingCategory && existingCategory.id !== id) {
-      return response.badRequest(res, null, "Category name already exists");
+      return response.ok(res, null, "Category name already exists");
     }
 
     const category = await categoryService.updateCategory(id, req.body);
@@ -75,13 +75,13 @@ const getCategoryById = async (
     if (id) {
       const parentCategory = await categoryService.findById(id);
       if (!parentCategory) {
-        return response.notFound(res, null, "Parent category not found");
+        return response.ok(res, null, "Parent category not found");
       }
 
       return response.ok(res, parentCategory, "Success !");
     }
 
-    return response.notFound(res, null, "CategoryId is required!");
+    return response.ok(res, null, "CategoryId is required!");
   } catch (error) {
     next(error);
   }
