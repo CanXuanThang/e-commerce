@@ -3,7 +3,7 @@ import { orderController } from "../controllers/OrderController";
 import { checkRole, verifyToken } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
 import { createOrderSchema, updateStatusOrder } from "../schema/order";
-import { checkIdSchema } from "../schema/common";
+import { checkIdSchema, paginationSchema } from "../schema/common";
 import { notiController } from "../controllers/NotificationCountController";
 
 const route = Router();
@@ -79,6 +79,21 @@ route.post(
  *   get:
  *     summary: Get all orders
  *     tags: [Orders]
+ *     parameters:
+ *       - in: query
+ *         name: pageNumber
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         required: false
+ *         description: Page number (starting from 1)
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         required: false
+ *         description: Number of records per page
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -89,6 +104,9 @@ route.post(
  */
 route.get(
   `${path}/all`,
+  validate({
+    query: paginationSchema,
+  }),
   verifyToken,
   checkRole("admin"),
   orderController.getAllOrders,

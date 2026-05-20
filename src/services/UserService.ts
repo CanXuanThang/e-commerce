@@ -26,13 +26,28 @@ export interface IAuthRequest {
   password: string;
 }
 
-const getAllUsers = async () => {
-  const users = await Users.findAll({
+const getAllUsers = async (pageNumber: number = 1, pageSize: number = 10) => {
+  const offset = (pageNumber - 1) * pageSize;
+
+  const { count, rows } = await Users.findAndCountAll({
     attributes: {
       exclude: ["password"],
     },
+
+    limit: pageSize,
+    offset: offset,
   });
-  return users;
+
+  const totalPages = Math.ceil(count / pageSize);
+  return {
+    data: rows,
+    pagination: {
+      pageNumber,
+      pageSize,
+      totalRecords: count,
+      totalPages,
+    },
+  };
 };
 
 const getUserById = async (id: number) => {

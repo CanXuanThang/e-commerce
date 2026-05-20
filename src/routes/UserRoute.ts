@@ -6,7 +6,7 @@ import {
   checkUserEmailSchema,
   createUserSchema,
 } from "../schema/user";
-import { checkIdSchema } from "../schema/common";
+import { checkIdSchema, paginationSchema } from "../schema/common";
 import z from "zod";
 import { checkRole, verifyToken } from "../middlewares/auth";
 
@@ -18,15 +18,59 @@ const path = "/users";
  *   get:
  *     summary: Lấy danh sách user
  *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: pageNumber
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         required: false
+ *         description: Page number (starting from 1)
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         required: false
+ *         description: Number of records per page
  *     responses:
  *       200:
  *         description: Thành công
  */
 userRoute.get(
   path,
+  validate({
+    query: paginationSchema,
+  }),
   verifyToken,
   checkRole("admin"),
   userController.getAllUsers,
+);
+
+/**
+ * @swagger
+ * /users/email:
+ *   get:
+ *     summary: Get user by email
+ *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       201:
+ *         description: Tạo thành công
+ */
+userRoute.get(
+  `${path}/email`,
+  validate({
+    query: checkUserEmailSchema,
+  }),
+  verifyToken,
+  checkRole("admin"),
+  userController.getUserByEmail,
 );
 
 /**
@@ -129,35 +173,6 @@ userRoute.put(
   verifyToken,
   checkRole("admin"),
   userController.updateUser,
-);
-
-/**
- * @swagger
- * /users/email:
- *   get:
- *     summary: Get user by email
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *     responses:
- *       201:
- *         description: Tạo thành công
- */
-userRoute.get(
-  `${path}/email`,
-  validate({
-    query: checkUserEmailSchema,
-  }),
-  verifyToken,
-  checkRole("admin"),
-  userController.getUserByEmail,
 );
 
 /**

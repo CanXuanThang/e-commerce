@@ -136,8 +136,10 @@ const createOrder = async (payload: CreateOrderPayload) => {
   });
 };
 
-const getAllOrders = async () => {
-  return Orders.findAll({
+const getAllOrders = async (pageNumber: number = 1, pageSize: number = 10) => {
+  const offset = (pageNumber - 1) * pageSize;
+
+  const { count, rows } = await Orders.findAndCountAll({
     attributes: {
       exclude: ["userId"],
       include: [
@@ -160,7 +162,24 @@ const getAllOrders = async () => {
     ],
 
     group: ["Orders.id", "user.id"],
+    limit: pageSize,
+    offset: offset,
+    subQuery: false,
+    distinct: true,
   });
+
+  const totalRecords = Array.isArray(count) ? count.length : count;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  return {
+    data: rows,
+    pagination: {
+      pageNumber,
+      pageSize,
+      totalRecords,
+      totalPages,
+    },
+  };
 };
 
 const deleteOrder = async (id: number) => {

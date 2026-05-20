@@ -3,13 +3,11 @@ import { Request, Response } from "express";
 import { response } from "../utils/response";
 import { userService } from "../services/UserService";
 
-const getAllUsers = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await userService.getAllUsers();
+    const pageNumber = Number(req.query.pageNumber as string);
+    const pageSize = Number(req.query.pageSize as string);
+    const users = await userService.getAllUsers(pageNumber, pageSize);
 
     return response.ok(res, users, "Get all users successfully");
   } catch (error) {
@@ -80,6 +78,7 @@ const getUserByEmail = async (
 ) => {
   try {
     const email = req.query.email as string;
+
     const user = await userService.getUserByEmail(email);
     if (!user) {
       return response.ok(res, null, "User not found");

@@ -40,12 +40,15 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getAllOrders = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const orders = await orderService.getAllOrders();
+    const pageNumber = Number(req.query.pageNumber as string);
+    const pageSize = Number(req.query.pageSize as string);
+
+    const orders = await orderService.getAllOrders(pageNumber, pageSize);
     return response.ok(res, orders, "Get all orders successfully");
   } catch (error) {
     next(error);
